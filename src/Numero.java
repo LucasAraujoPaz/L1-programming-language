@@ -9,8 +9,6 @@ public interface Numero extends NumeroOuOperadorNumerico {
 	final static Set<OperadorNumerico> multiplicacaoDivisaoEModulo = Set.of(
 			OperadorNumericoBinario.MULTIPLICACAO, OperadorNumericoBinario.DIVISAO, OperadorNumericoBinario.MODULO);
 	
-	final static Set<OperadorNumerico> somaESubtracao = Set.of(OperadorNumericoBinario.SOMA, OperadorNumericoBinario.SUBTRACAO);
-	
 	public static Numero processar(final List<NumeroOuOperadorNumerico> lista) {
 		
 		final List<NumeroOuOperadorNumerico> semUnarios = new ArrayList<>();
@@ -45,12 +43,12 @@ public interface Numero extends NumeroOuOperadorNumerico {
 								(Numero) semExponenciacao.get(i++ + 1)
 						));
 			else
-				semMultiplicaoDivisaoNemModulo.add(lista.get(i));
+				semMultiplicaoDivisaoNemModulo.add(semExponenciacao.get(i));
 		}
 
 		Numero semSomaNemSubtracao = (Numero) semMultiplicaoDivisaoNemModulo.get(0);
 		for (int i = 1; i < semMultiplicaoDivisaoNemModulo.size(); i += 2) {
-			semSomaNemSubtracao =  ((OperadorNumericoBinario) semMultiplicaoDivisaoNemModulo.get(i)).obterExpressao(
+			semSomaNemSubtracao = ((OperadorNumericoBinario) semMultiplicaoDivisaoNemModulo.get(i)).obterExpressao(
 					semSomaNemSubtracao, (Numero) semMultiplicaoDivisaoNemModulo.get(i + 1));
 		}
 
@@ -116,6 +114,21 @@ interface OperadorNumericoBinario extends OperadorNumerico {
 }
 
 interface NumeroOuOperadorNumerico {
+}
+
+class NumeroLiteral implements Numero {
+
+	final double numero;
+	
+	public NumeroLiteral(final double numero) {
+		this.numero = numero;
+	}
+	
+	@Override
+	public double obterValor() {
+		return numero;
+	}
+	
 }
 
 class ExpressaoNegativo implements Numero {
