@@ -4,8 +4,6 @@ import java.util.Set;
 
 public interface Numero extends NumeroOuOperadorNumerico {
 
-	public double obterValor();
-
 	final static Set<OperadorNumerico> multiplicacaoDivisaoEModulo = Set.of(
 			OperadorNumericoBinario.MULTIPLICACAO, OperadorNumericoBinario.DIVISAO, OperadorNumericoBinario.MODULO);
 	
@@ -54,6 +52,8 @@ public interface Numero extends NumeroOuOperadorNumerico {
 
 		return semSomaNemSubtracao;
 	}
+	
+	public double obterValor();
 }
 
 interface OperadorNumerico extends NumeroOuOperadorNumerico {
@@ -70,7 +70,7 @@ interface OperadorNumericoUnario extends OperadorNumerico {
 		NEGATIVO = new OperadorNumericoUnario() {
 			@Override
 			public Numero obterExpressao(Numero numero) {
-				return new ExpressaoNegativo(numero);
+				return new ExpressaoNegacaoNumerica(numero);
 			}};
 		
 	public Numero obterExpressao(final Numero numero);
@@ -131,11 +131,11 @@ class NumeroLiteral implements Numero {
 	
 }
 
-class ExpressaoNegativo implements Numero {
+class ExpressaoNegacaoNumerica implements Numero {
 
 	final Numero numero;
 
-	ExpressaoNegativo(final Numero numero) {
+	ExpressaoNegacaoNumerica(final Numero numero) {
 		this.numero = numero;
 	}
 

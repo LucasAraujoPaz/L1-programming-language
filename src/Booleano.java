@@ -17,8 +17,6 @@ public interface Booleano extends BooleanoOuOperadorBooleano {
 		}
 	};
 
-	public boolean obterValor();
-
 	public static Booleano processar(final List<BooleanoOuOperadorBooleano> lista) {
 
 		final List<BooleanoOuOperadorBooleano> semNegacao = new ArrayList<>();
@@ -44,6 +42,8 @@ public interface Booleano extends BooleanoOuOperadorBooleano {
 
 		return semOu;
 	}
+	
+	public boolean obterValor();
 }
 
 interface OperadorBooleano extends BooleanoOuOperadorBooleano {
