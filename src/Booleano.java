@@ -1,18 +1,18 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public interface Booleano extends BooleanoOuOperadorBooleano {
+public interface Booleano extends Expressao<Boolean>, BooleanoOuOperadorBooleano {
 
 	public static final Booleano VERDADEIRO = new Booleano() {
 		@Override
-		public boolean obterValor() {
+		public Boolean obterValor() {
 			return true;
 		}
 	};
 
 	public static final Booleano FALSO = new Booleano() {
 		@Override
-		public boolean obterValor() {
+		public Boolean obterValor() {
 			return false;
 		}
 	};
@@ -41,9 +41,7 @@ public interface Booleano extends BooleanoOuOperadorBooleano {
 		}
 
 		return semOu;
-	}
-	
-	public boolean obterValor();
+	}	
 }
 
 interface OperadorBooleano extends BooleanoOuOperadorBooleano {
@@ -66,7 +64,7 @@ class ExpressaoNao implements Booleano {
 	}
 
 	@Override
-	public boolean obterValor() {
+	public Boolean obterValor() {
 		return !negado.obterValor();
 	}
 }
@@ -81,7 +79,7 @@ class ExpressaoE implements Booleano {
 	}
 
 	@Override
-	public boolean obterValor() {
+	public Boolean obterValor() {
 		return esquerda.obterValor() && direita.obterValor();
 	}
 }
@@ -96,7 +94,7 @@ class ExpressaoOu implements Booleano {
 	}
 
 	@Override
-	public boolean obterValor() {
+	public Boolean obterValor() {
 		return esquerda.obterValor() || direita.obterValor();
 	}
 }

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public interface Numero extends NumeroOuOperadorNumerico {
+public interface Numero extends Expressao<Double>, NumeroOuOperadorNumerico {
 
 	final static Set<OperadorNumerico> multiplicacaoDivisaoEModulo = Set.of(
 			OperadorNumericoBinario.MULTIPLICACAO, OperadorNumericoBinario.DIVISAO, OperadorNumericoBinario.MODULO);
@@ -52,8 +52,6 @@ public interface Numero extends NumeroOuOperadorNumerico {
 
 		return semSomaNemSubtracao;
 	}
-	
-	public double obterValor();
 }
 
 interface OperadorNumerico extends NumeroOuOperadorNumerico {
@@ -125,7 +123,7 @@ class NumeroLiteral implements Numero {
 	}
 	
 	@Override
-	public double obterValor() {
+	public Double obterValor() {
 		return numero;
 	}
 	
@@ -140,7 +138,7 @@ class ExpressaoNegacaoNumerica implements Numero {
 	}
 
 	@Override
-	public double obterValor() {
+	public Double obterValor() {
 		return - numero.obterValor();
 	}
 }
@@ -155,7 +153,7 @@ class ExpressaoExponenciacao implements Numero {
 	}
 
 	@Override
-	public double obterValor() {
+	public Double obterValor() {
 		return Math.pow(esquerda.obterValor(), direita.obterValor());
 	}
 }
@@ -170,7 +168,7 @@ class ExpressaoMultiplicacao implements Numero {
 	}
 
 	@Override
-	public double obterValor() {
+	public Double obterValor() {
 		return esquerda.obterValor() * direita.obterValor();
 	}
 }
@@ -185,7 +183,7 @@ class ExpressaoDivisao implements Numero {
 	}
 
 	@Override
-	public double obterValor() {
+	public Double obterValor() {
 		return esquerda.obterValor() / direita.obterValor();
 	}
 }
@@ -200,7 +198,7 @@ class ExpressaoModulo implements Numero {
 	}
 
 	@Override
-	public double obterValor() {
+	public Double obterValor() {
 		return esquerda.obterValor() % direita.obterValor();
 	}
 }
@@ -215,7 +213,7 @@ class ExpressaoSoma implements Numero {
 	}
 
 	@Override
-	public double obterValor() {
+	public Double obterValor() {
 		return esquerda.obterValor() + direita.obterValor();
 	}
 }
@@ -230,7 +228,7 @@ class ExpressaoSubtracao implements Numero {
 	}
 
 	@Override
-	public double obterValor() {
+	public Double obterValor() {
 		return esquerda.obterValor() - direita.obterValor();
 	}
 }

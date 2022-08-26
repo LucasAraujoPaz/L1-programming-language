@@ -1,5 +1,4 @@
-public interface Texto {
-	public String obterValor();
+public interface Texto extends Expressao<String> {
 }
 
 class TextoLiteral implements Texto {
