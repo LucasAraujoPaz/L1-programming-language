@@ -1,7 +1,7 @@
-public interface Texto extends Expressao<String> {
+public interface Texto extends Expressao<Texto, String> {
 }
 
-class TextoLiteral implements Texto {
+class TextoLiteral implements Texto, ExpressaoSimples<Texto, String> {
 	
 	final String texto;
 	
@@ -10,7 +10,7 @@ class TextoLiteral implements Texto {
 	}
 
 	@Override
-	public String obterValor() {
+	public String obterValorNativo() {
 		return texto;
 	}
 }

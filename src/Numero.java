@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public interface Numero extends Expressao<Double>, NumeroOuOperadorNumerico {
+public interface Numero extends NumeroOuOperadorNumerico, Expressao<Numero, Double> {
 
 	final static Set<OperadorNumerico> multiplicacaoDivisaoEModulo = Set.of(
 			OperadorNumericoBinario.MULTIPLICACAO, OperadorNumericoBinario.DIVISAO, OperadorNumericoBinario.MODULO);
@@ -114,7 +114,7 @@ interface OperadorNumericoBinario extends OperadorNumerico {
 interface NumeroOuOperadorNumerico {
 }
 
-class NumeroLiteral implements Numero {
+class NumeroLiteral implements Numero, ExpressaoSimples<Numero, Double> {
 
 	final double numero;
 	
@@ -123,13 +123,12 @@ class NumeroLiteral implements Numero {
 	}
 	
 	@Override
-	public Double obterValor() {
+	public Double obterValorNativo() {
 		return numero;
 	}
-	
 }
 
-class ExpressaoNegacaoNumerica implements Numero {
+class ExpressaoNegacaoNumerica implements Numero, ExpressaoComplexa<Numero, Double> {
 
 	final Numero numero;
 
@@ -138,12 +137,17 @@ class ExpressaoNegacaoNumerica implements Numero {
 	}
 
 	@Override
-	public Double obterValor() {
-		return - numero.obterValor();
+	public Double obterValorNativo() {
+		return - numero.obterValorNativo();
+	}
+
+	@Override
+	public ExpressaoSimples<Numero, Double> obterValorPrimitivo() {
+		return new NumeroLiteral(obterValorNativo());
 	}
 }
 
-class ExpressaoExponenciacao implements Numero {
+class ExpressaoExponenciacao implements Numero, ExpressaoComplexa<Numero, Double> {
 
 	final Numero esquerda, direita;
 
@@ -153,12 +157,17 @@ class ExpressaoExponenciacao implements Numero {
 	}
 
 	@Override
-	public Double obterValor() {
-		return Math.pow(esquerda.obterValor(), direita.obterValor());
+	public Double obterValorNativo() {
+		return Math.pow(esquerda.obterValorNativo(), direita.obterValorNativo());
+	}
+	
+	@Override
+	public ExpressaoSimples<Numero, Double> obterValorPrimitivo() {
+		return new NumeroLiteral(obterValorNativo());
 	}
 }
 
-class ExpressaoMultiplicacao implements Numero {
+class ExpressaoMultiplicacao implements Numero, ExpressaoComplexa<Numero, Double> {
 
 	final Numero esquerda, direita;
 
@@ -168,12 +177,17 @@ class ExpressaoMultiplicacao implements Numero {
 	}
 
 	@Override
-	public Double obterValor() {
-		return esquerda.obterValor() * direita.obterValor();
+	public Double obterValorNativo() {
+		return esquerda.obterValorNativo() * direita.obterValorNativo();
+	}
+	
+	@Override
+	public ExpressaoSimples<Numero, Double> obterValorPrimitivo() {
+		return new NumeroLiteral(obterValorNativo());
 	}
 }
 
-class ExpressaoDivisao implements Numero {
+class ExpressaoDivisao implements Numero, ExpressaoComplexa<Numero, Double> {
 
 	final Numero esquerda, direita;
 
@@ -183,12 +197,17 @@ class ExpressaoDivisao implements Numero {
 	}
 
 	@Override
-	public Double obterValor() {
-		return esquerda.obterValor() / direita.obterValor();
+	public Double obterValorNativo() {
+		return esquerda.obterValorNativo() / direita.obterValorNativo();
+	}
+	
+	@Override
+	public ExpressaoSimples<Numero, Double> obterValorPrimitivo() {
+		return new NumeroLiteral(obterValorNativo());
 	}
 }
 
-class ExpressaoModulo implements Numero {
+class ExpressaoModulo implements Numero, ExpressaoComplexa<Numero, Double> {
 
 	final Numero esquerda, direita;
 
@@ -198,12 +217,17 @@ class ExpressaoModulo implements Numero {
 	}
 
 	@Override
-	public Double obterValor() {
-		return esquerda.obterValor() % direita.obterValor();
+	public Double obterValorNativo() {
+		return esquerda.obterValorNativo() % direita.obterValorNativo();
+	}
+	
+	@Override
+	public ExpressaoSimples<Numero, Double> obterValorPrimitivo() {
+		return new NumeroLiteral(obterValorNativo());
 	}
 }
 
-class ExpressaoSoma implements Numero {
+class ExpressaoSoma implements Numero, ExpressaoComplexa<Numero, Double>  {
 
 	final Numero esquerda, direita;
 
@@ -213,12 +237,17 @@ class ExpressaoSoma implements Numero {
 	}
 
 	@Override
-	public Double obterValor() {
-		return esquerda.obterValor() + direita.obterValor();
+	public Double obterValorNativo() {
+		return esquerda.obterValorNativo() + direita.obterValorNativo();
+	}
+	
+	@Override
+	public ExpressaoSimples<Numero, Double> obterValorPrimitivo() {
+		return new NumeroLiteral(obterValorNativo());
 	}
 }
 
-class ExpressaoSubtracao implements Numero {
+class ExpressaoSubtracao implements Numero, ExpressaoComplexa<Numero, Double>  {
 
 	final Numero esquerda, direita;
 
@@ -228,7 +257,12 @@ class ExpressaoSubtracao implements Numero {
 	}
 
 	@Override
-	public Double obterValor() {
-		return esquerda.obterValor() - direita.obterValor();
+	public Double obterValorNativo() {
+		return esquerda.obterValorNativo() - direita.obterValorNativo();
+	}
+	
+	@Override
+	public ExpressaoSimples<Numero, Double> obterValorPrimitivo() {
+		return new NumeroLiteral(obterValorNativo());
 	}
 }

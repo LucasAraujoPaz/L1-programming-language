@@ -1,58 +1,68 @@
 public interface Funcao
-	<TParametro extends Expressao<?>, TRetorno extends Expressao<?>> 
-	extends Expressao<Funcao<TParametro, TRetorno>> {
+	extends ExpressaoSimples<Funcao, Funcao> {
 	
-	public Expressao<TRetorno> aplicar(Expressao<TParametro> parametro);
+	public ExpressaoSimples aplicar(Expressao parametro);
 }
 
-interface InvocacaoDeFuncao<TParametro, TRetorno> extends Expressao<Expressao<TRetorno>> {
+interface InvocacaoDeFuncao
+	extends ExpressaoComplexa {
 }
 
 class InvocacaoDeFuncaoLiteral
-	<TParametro extends Expressao<?>, TRetorno extends Expressao<?>> 
-	implements InvocacaoDeFuncao<TParametro, TRetorno> {
+	implements InvocacaoDeFuncao {
 
-	public final Funcao<TParametro, TRetorno> funcao;
-	public final Expressao<TParametro> parametro;
+	public final Funcao funcao;
+	public final Expressao parametro;
 	
-	public InvocacaoDeFuncaoLiteral(Funcao<TParametro, TRetorno> funcao, Expressao<TParametro> parametro) {
+	public InvocacaoDeFuncaoLiteral(Funcao funcao, Expressao parametro) {
 		this.funcao = funcao;
 		this.parametro = parametro;
 	}
 	
-	@Override
-	public Expressao<TRetorno> obterValor() {
+	public ExpressaoSimples obterValorPrimitivo() {
 		return funcao.aplicar(parametro);
+	}
+
+	@Override
+	public Object obterValorNativo() {
+		return obterValorPrimitivo().obterValorNativo();
 	}
 }
 
 class FuncaoLiteral
-	<TParametro extends Expressao<?>, TRetorno extends Expressao<?>>
-	implements Funcao<TParametro, TRetorno> {
+	implements Funcao {
 
-	public final Expressao<TRetorno> corpo;
+	public final Parametro parametro;
+	public Expressao corpo;
 	
-	public FuncaoLiteral(Expressao<TRetorno> corpo) {
+	public FuncaoLiteral(Parametro parametro, Expressao corpo) {
+		this.parametro = parametro;
 		this.corpo = corpo;
 	}
 	
 	@Override
-	public Expressao<TRetorno> aplicar(Expressao<TParametro> parametro) {
-		return corpo;
+	public ExpressaoSimples aplicar(Expressao input) { 
+		var previo = this.parametro.valor;
+		this.parametro.valor = input.obterValorPrimitivo();
+		var resultado = corpo.obterValorPrimitivo();
+		this.parametro.valor = previo;
+		return resultado;
 	}
 
 	@Override
-	public Funcao<TParametro, TRetorno> obterValor() {
+	public Funcao obterValorNativo() {
 		return this;
 	}
 }
-/*
-class CorpoDeFuncao<T> {
-	final Expressao<T> expressao;
-	public CorpoDeFuncao(Expressao<T> expressao) {
-		this.expressao = expressao;
+
+class Parametro implements ExpressaoComplexa {
+	Expressao valor;
+	@Override
+	public ExpressaoSimples obterValorPrimitivo() {
+		return valor.obterValorPrimitivo();
 	}
-	public Expressao<T> obterValor() {
-		return expressao;
+	@Override
+	public Object obterValorNativo() {
+		return valor.obterValorPrimitivo().obterValorNativo();
 	}
-}*/
+}

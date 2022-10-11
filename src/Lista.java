@@ -1,4 +1,4 @@
 import java.util.Collection;
 
-public interface Lista extends Expressao<Collection<Expressao<?>>> {
+public interface Lista extends ExpressaoSimples<Lista, Collection<?>> {
 }

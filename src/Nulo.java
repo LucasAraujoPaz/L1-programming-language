@@ -1,10 +1,10 @@
-public interface Nulo extends Expressao<Nulo> {
+public interface Nulo extends ExpressaoSimples<Nulo, Nulo> {
 
 	public final static Nulo NULO = new Nulo() {
 
 		@Override
-		public Nulo obterValor() {
-			return this;
+		public Nulo obterValorNativo() {
+			return null;
 		}
 	};
 }
