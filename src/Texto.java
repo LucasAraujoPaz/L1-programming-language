@@ -1,7 +1,8 @@
-public interface Texto extends Expressao<Texto, String> {
+public interface Texto extends Expressao {
+	public String obterValorNativo();
 }
 
-class TextoLiteral implements Texto, ExpressaoSimples<Texto, String> {
+class TextoLiteral implements Texto, ExpressaoSimples {
 	
 	final String texto;
 	

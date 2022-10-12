@@ -1,17 +1,17 @@
-interface Expressao<T, N> extends Nativo<N> {
-	public ExpressaoSimples<T, N> obterValorPrimitivo();
+interface Nativo {
+	public Object obterValorNativo();
 }
 
-interface ExpressaoSimples<T, N> extends Expressao<T, N> {
+interface Expressao extends Nativo {
+	public ExpressaoSimples obterValorPrimitivo();
+}
+
+interface ExpressaoSimples extends Expressao {
 	@Override
-	public default ExpressaoSimples<T, N> obterValorPrimitivo() {
+	public default ExpressaoSimples obterValorPrimitivo() {
 		return this;
 	}
 }
 
-interface ExpressaoComplexa<T, N> extends Expressao<T, N> {
-}
-
-interface Nativo<N> {
-	public N obterValorNativo();
+interface ExpressaoComplexa extends Expressao {
 }

@@ -1,14 +1,15 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public interface Booleano extends BooleanoOuOperadorBooleano, Expressao<Booleano, Boolean> {
+public interface Booleano extends Expressao {
 	
 	public static final Verdadeiro VERDADEIRO = new Verdadeiro() {};
 	public static final Falso FALSO = new Falso() {};
+	public Boolean obterValorNativo();
 	
-	public static Booleano processar(final List<BooleanoOuOperadorBooleano> lista) {
+	public static Booleano processar(final List<Object> lista) {
 
-		final List<BooleanoOuOperadorBooleano> semNegacao = new ArrayList<>();
+		final List<Object> semNegacao = new ArrayList<>();
 		for (int i = 0; i < lista.size(); ++i) {
 			if (lista.get(i) == OperadorBooleano.NAO)
 				semNegacao.add(new ExpressaoNao((Booleano) lista.get(i++ + 1)));
@@ -16,7 +17,7 @@ public interface Booleano extends BooleanoOuOperadorBooleano, Expressao<Booleano
 				semNegacao.add(lista.get(i));
 		}
 
-		final List<BooleanoOuOperadorBooleano> semE = new ArrayList<>();
+		final List<Object> semE = new ArrayList<>();
 		for (int i = 0; i < semNegacao.size(); ++i) {
 			if (semNegacao.get(i) == OperadorBooleanoBinario.E)
 				semE.add(new ExpressaoE((Booleano) semE.remove(semE.size() - 1), (Booleano) semNegacao.get(i++ + 1)));
@@ -33,7 +34,7 @@ public interface Booleano extends BooleanoOuOperadorBooleano, Expressao<Booleano
 	}	
 }
 
-interface OperadorBooleano extends BooleanoOuOperadorBooleano {
+interface OperadorBooleano {
 
 	public static final OperadorBooleano
 		NAO = new OperadorBooleano() {};
@@ -44,78 +45,75 @@ interface OperadorBooleanoBinario extends OperadorBooleano {
 	public static final OperadorBooleanoBinario
 		IGUAL = new OperadorBooleanoBinario() {
 			@Override
-			public Booleano obterExpressao(Expressao<?, ?> esquerda, Expressao<?, ?> direita) {
+			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
 				return new ExpressaoIgual(esquerda, direita);
 			}
 		}, 
 		DIFERENTE = new OperadorBooleanoBinario() {
 			@Override
-			public Booleano obterExpressao(Expressao<?, ?> esquerda, Expressao<?, ?> direita) {
+			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
 				return new ExpressaoDiferente(esquerda, direita);
 			}
 		}, 
 		MAIOR = new OperadorBooleanoBinario() {
 			@Override
-			public Booleano obterExpressao(Expressao<?, ?> esquerda, Expressao<?, ?> direita) {
+			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
 				return new ExpressaoMaior((Numero) esquerda, (Numero) direita);
 			}
 		},
 		MENOR = new OperadorBooleanoBinario() {
 			@Override
-			public Booleano obterExpressao(Expressao<?, ?> esquerda, Expressao<?, ?> direita) {
+			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
 				return new ExpressaoMenor((Numero) esquerda, (Numero) direita);
 			}
 		},
 		MAIOR_OU_IGUAL = new OperadorBooleanoBinario() {
 			@Override
-			public Booleano obterExpressao(Expressao<?, ?> esquerda, Expressao<?, ?> direita) {
+			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
 				return new ExpressaoMaiorOuIgual((Numero) esquerda, (Numero) direita);
 			}
 		},
 		MENOR_OU_IGUAL = new OperadorBooleanoBinario() {
 			@Override
-			public Booleano obterExpressao(Expressao<?, ?> esquerda, Expressao<?, ?> direita) {
+			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
 				return new ExpressaoMenorOuIgual((Numero) esquerda, (Numero) direita);
 			}
 		},
 		E = new OperadorBooleanoBinario() {
 			@Override
-			public Booleano obterExpressao(Expressao<?, ?> esquerda, Expressao<?, ?> direita) {
+			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
 				return new ExpressaoE((Booleano) esquerda, (Booleano) direita);
 			}
 		}, 
 		OU = new OperadorBooleanoBinario() {
 			@Override
-			public Booleano obterExpressao(Expressao<?, ?> esquerda, Expressao<?, ?> direita) {
+			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
 				return new ExpressaoDiferente(esquerda, direita);
 			}
 		};
 	
-	public Booleano obterExpressao(final Expressao<?, ?> esquerda, final Expressao<?, ?> direita);
+	public Booleano obterExpressao(final Expressao esquerda, final Expressao direita);
 }
 
-interface BooleanoOuOperadorBooleano {
-}
-
-class Verdadeiro implements Booleano, ExpressaoSimples<Booleano, Boolean> {
+class Verdadeiro implements Booleano, ExpressaoSimples {
 	@Override
 	public Boolean obterValorNativo() {
 		return true;
 	}
 }
 
-class Falso implements Booleano, ExpressaoSimples<Booleano, Boolean> {
+class Falso implements Booleano, ExpressaoSimples {
 	@Override
 	public Boolean obterValorNativo() {
 		return false;
 	}
 }
 
-class ExpressaoIgual implements Booleano, ExpressaoComplexa<Booleano, Boolean> {
+class ExpressaoIgual implements Booleano, ExpressaoComplexa {
 
-	final Expressao<?, ?> esquerda, direita;
+	final Expressao esquerda, direita;
 
-	ExpressaoIgual(final Expressao<?, ?> esquerda, final Expressao<?, ?> direita) {
+	ExpressaoIgual(final Expressao esquerda, final Expressao direita) {
 		this.esquerda = esquerda;
 		this.direita = direita;
 	}
@@ -126,16 +124,16 @@ class ExpressaoIgual implements Booleano, ExpressaoComplexa<Booleano, Boolean> {
 	}
 	
 	@Override
-	public ExpressaoSimples<Booleano, Boolean> obterValorPrimitivo() {
+	public ExpressaoSimples obterValorPrimitivo() {
 		return obterValorNativo() ? Booleano.VERDADEIRO : Booleano.FALSO;
 	}
 }
 
-class ExpressaoDiferente implements Booleano, ExpressaoComplexa<Booleano, Boolean> {
+class ExpressaoDiferente implements Booleano, ExpressaoComplexa {
 
-	final Expressao<?, ?> esquerda, direita;
+	final Expressao esquerda, direita;
 
-	ExpressaoDiferente(final Expressao<?, ?> esquerda, final Expressao<?, ?> direita) {
+	ExpressaoDiferente(final Expressao esquerda, final Expressao direita) {
 		this.esquerda = esquerda;
 		this.direita = direita;
 	}
@@ -146,146 +144,146 @@ class ExpressaoDiferente implements Booleano, ExpressaoComplexa<Booleano, Boolea
 	}
 	
 	@Override
-	public ExpressaoSimples<Booleano, Boolean> obterValorPrimitivo() {
+	public ExpressaoSimples obterValorPrimitivo() {
 		return obterValorNativo() ? Booleano.VERDADEIRO : Booleano.FALSO;
 	}
 }
 
-class ExpressaoMaior implements Booleano, ExpressaoComplexa<Booleano, Boolean> {
+class ExpressaoMaior implements Booleano, ExpressaoComplexa {
 
-	final Numero esquerda, direita;
+	final Expressao esquerda, direita;
 
-	ExpressaoMaior(final Numero esquerda, final Numero direita) {
+	ExpressaoMaior(final Expressao esquerda, final Expressao direita) {
 		this.esquerda = esquerda;
 		this.direita = direita;
 	}
 
 	@Override
 	public Boolean obterValorNativo() {
-		return esquerda.obterValorNativo() > direita.obterValorNativo();
+		return (Double) esquerda.obterValorNativo() > (Double) direita.obterValorNativo();
 	}
 	
 	@Override
-	public ExpressaoSimples<Booleano, Boolean> obterValorPrimitivo() {
+	public ExpressaoSimples obterValorPrimitivo() {
 		return obterValorNativo() ? Booleano.VERDADEIRO : Booleano.FALSO;
 	}
 }
 
-class ExpressaoMenor implements Booleano, ExpressaoComplexa<Booleano, Boolean> {
+class ExpressaoMenor implements Booleano, ExpressaoComplexa {
 
-	final Numero esquerda, direita;
+	final Expressao esquerda, direita;
 
-	ExpressaoMenor(final Numero esquerda, final Numero direita) {
+	ExpressaoMenor(final Expressao esquerda, final Expressao direita) {
 		this.esquerda = esquerda;
 		this.direita = direita;
 	}
 
 	@Override
 	public Boolean obterValorNativo() {
-		return esquerda.obterValorNativo() < direita.obterValorNativo();
+		return (Double) esquerda.obterValorNativo() < (Double) direita.obterValorNativo();
 	}
 	
 	@Override
-	public ExpressaoSimples<Booleano, Boolean> obterValorPrimitivo() {
+	public ExpressaoSimples obterValorPrimitivo() {
 		return obterValorNativo() ? Booleano.VERDADEIRO : Booleano.FALSO;
 	}
 }
 
-class ExpressaoMaiorOuIgual implements Booleano, ExpressaoComplexa<Booleano, Boolean> {
+class ExpressaoMaiorOuIgual implements Booleano, ExpressaoComplexa {
 
-	final Numero esquerda, direita;
+	final Expressao esquerda, direita;
 
-	ExpressaoMaiorOuIgual(final Numero esquerda, final Numero direita) {
+	ExpressaoMaiorOuIgual(final Expressao esquerda, final Expressao direita) {
 		this.esquerda = esquerda;
 		this.direita = direita;
 	}
 
 	@Override
 	public Boolean obterValorNativo() {
-		return esquerda.obterValorNativo() >= direita.obterValorNativo();
+		return (Double) esquerda.obterValorNativo() >= (Double) direita.obterValorNativo();
 	}
 	
 	@Override
-	public ExpressaoSimples<Booleano, Boolean> obterValorPrimitivo() {
+	public ExpressaoSimples obterValorPrimitivo() {
 		return obterValorNativo() ? Booleano.VERDADEIRO : Booleano.FALSO;
 	}
 }
 
-class ExpressaoMenorOuIgual implements Booleano, ExpressaoComplexa<Booleano, Boolean> {
+class ExpressaoMenorOuIgual implements Booleano, ExpressaoComplexa {
 
-	final Numero esquerda, direita;
+	final Expressao esquerda, direita;
 
-	ExpressaoMenorOuIgual(final Numero esquerda, final Numero direita) {
+	ExpressaoMenorOuIgual(final Expressao esquerda, final Expressao direita) {
 		this.esquerda = esquerda;
 		this.direita = direita;
 	}
 
 	@Override
 	public Boolean obterValorNativo() {
-		return esquerda.obterValorNativo() <= direita.obterValorNativo();
+		return (Double) esquerda.obterValorNativo() <= (Double) direita.obterValorNativo();
 	}
 	
 	@Override
-	public ExpressaoSimples<Booleano, Boolean> obterValorPrimitivo() {
+	public ExpressaoSimples obterValorPrimitivo() {
 		return obterValorNativo() ? Booleano.VERDADEIRO : Booleano.FALSO;
 	}
 }
 
-class ExpressaoNao implements Booleano, ExpressaoComplexa<Booleano, Boolean> {
+class ExpressaoNao implements Booleano, ExpressaoComplexa {
 
-	final Booleano negado;
+	final Expressao negado;
 
-	ExpressaoNao(final Booleano negado) {
+	ExpressaoNao(final Expressao negado) {
 		this.negado = negado;
 	}
 
 	@Override
 	public Boolean obterValorNativo() {
-		return !negado.obterValorNativo();
+		return ! (Boolean) negado.obterValorNativo();
 	}
 
 	@Override
-	public ExpressaoSimples<Booleano, Boolean> obterValorPrimitivo() {
+	public ExpressaoSimples obterValorPrimitivo() {
 		return obterValorNativo() ? Booleano.VERDADEIRO : Booleano.FALSO;
 	}
 }
 
-class ExpressaoE implements Booleano, ExpressaoComplexa<Booleano, Boolean> {
+class ExpressaoE implements Booleano, ExpressaoComplexa {
 
-	final Booleano esquerda, direita;
+	final Expressao esquerda, direita;
 
-	ExpressaoE(final Booleano esquerda, final Booleano direita) {
+	ExpressaoE(final Expressao esquerda, final Expressao direita) {
 		this.esquerda = esquerda;
 		this.direita = direita;
 	}
 
 	@Override
 	public Boolean obterValorNativo() {
-		return esquerda.obterValorNativo() && direita.obterValorNativo();
+		return (Boolean) esquerda.obterValorNativo() && (Boolean) direita.obterValorNativo();
 	}
 	
 	@Override
-	public ExpressaoSimples<Booleano, Boolean> obterValorPrimitivo() {
+	public ExpressaoSimples obterValorPrimitivo() {
 		return obterValorNativo() ? Booleano.VERDADEIRO : Booleano.FALSO;
 	}
 }
 
-class ExpressaoOu implements Booleano, ExpressaoComplexa<Booleano, Boolean> {
+class ExpressaoOu implements Booleano, ExpressaoComplexa {
 
-	final Booleano esquerda, direita;
+	final Expressao esquerda, direita;
 
-	ExpressaoOu(final Booleano esquerda, final Booleano direita) {
+	ExpressaoOu(final Expressao esquerda, final Expressao direita) {
 		this.esquerda = esquerda;
 		this.direita = direita;
 	}
 
 	@Override
 	public Boolean obterValorNativo() {
-		return esquerda.obterValorNativo() || direita.obterValorNativo();
+		return (Boolean) esquerda.obterValorNativo() || (Boolean) direita.obterValorNativo();
 	}
 	
 	@Override
-	public ExpressaoSimples<Booleano, Boolean> obterValorPrimitivo() {
+	public ExpressaoSimples obterValorPrimitivo() {
 		return obterValorNativo() ? Booleano.VERDADEIRO : Booleano.FALSO;
 	}
 }

@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class ExpressaoSeSenao implements ExpressaoComplexa<Expressao, Object> {
+public class ExpressaoSeSenao implements ExpressaoComplexa {
 	List<Booleano> condicoes;
 	List<Expressao> corpos;
 	public ExpressaoSeSenao(List<Booleano> condicoes, List<Expressao> corpos) {
@@ -11,7 +11,7 @@ public class ExpressaoSeSenao implements ExpressaoComplexa<Expressao, Object> {
 	@Override
 	public ExpressaoSimples obterValorPrimitivo() {
 		for (int i = 0; i < condicoes.size(); ++i)
-			if (condicoes.get(i).obterValorNativo())
+			if ((Boolean) condicoes.get(i).obterValorNativo())
 				return corpos.get(i).obterValorPrimitivo();
 		
 		return corpos.get(condicoes.size()).obterValorPrimitivo();
