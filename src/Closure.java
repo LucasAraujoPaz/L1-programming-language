@@ -18,20 +18,20 @@ class ClosureLiteral
 	implements Closure {
 	
 	public final Funcao funcao;
-	public final Map<Parametro, Valor> escopo;
+	public final Map<Parametro, Optional<Valor>> escopo;
 	
 	public ClosureLiteral(Funcao funcao) {
 		this.funcao = funcao;
 		this.escopo = funcao.getUpvalues().stream()
-				.collect(Collectors.toMap(Function.identity(), Parametro::avaliar));
+				.collect(Collectors.toMap(Function.identity(), p -> p.valor));
 	}
 	
 	private void inverterEscopo() {
 		for (var entry : escopo.entrySet()) {
 			var valorOriginalDoParametro = entry.getKey().valor;
-			var valorCapturado = Optional.ofNullable(entry.getValue());
+			var valorCapturado = entry.getValue();
 			entry.getKey().valor = valorCapturado;
-			entry.setValue(valorOriginalDoParametro.orElse(null));
+			entry.setValue(valorOriginalDoParametro);
 		}
 	}
 	
@@ -110,7 +110,7 @@ class FuncaoLiteral
 }
 
 class Parametro implements Expressao {
-	protected Optional<? extends Valor> valor = Optional.empty();
+	protected Optional<Valor> valor = Optional.empty();
 	
 	@Override
 	public Valor avaliar() {
