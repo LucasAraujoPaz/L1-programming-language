@@ -15,5 +15,5 @@ Let factorial =
 .
 
 Let main = Function(String x) -> Number:
-  factorial(10)
+	factorial(10)
 End.
