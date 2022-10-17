@@ -1,4 +1,4 @@
-public interface Nulo extends ExpressaoSimples {
+public interface Nulo extends Valor {
 
 	public final static Nulo NULO = new Nulo() {
 

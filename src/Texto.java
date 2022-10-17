@@ -1,8 +1,7 @@
 public interface Texto extends Expressao {
-	public String obterValorNativo();
 }
 
-class TextoLiteral implements Texto, ExpressaoSimples {
+class TextoLiteral implements Texto {
 	
 	final String texto;
 	
@@ -11,7 +10,21 @@ class TextoLiteral implements Texto, ExpressaoSimples {
 	}
 
 	@Override
-	public String obterValorNativo() {
+	public TextoAvaliado avaliar() {
+		return new TextoAvaliado(texto);
+	}
+}
+
+class TextoAvaliado implements Valor {
+	
+	final String texto;
+	
+	public TextoAvaliado(final String texto) {
+		this.texto = texto;
+	}
+
+	@Override
+	public Object obterValorNativo() {
 		return texto;
 	}
 }

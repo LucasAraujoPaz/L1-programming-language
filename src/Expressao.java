@@ -1,17 +1,10 @@
-interface Nativo {
+interface Expressao {
+	public Valor avaliar();
+	public default Object obterValorNativo() {
+		return avaliar().obterValorNativo();
+	};
+}
+
+interface Valor {
 	public Object obterValorNativo();
-}
-
-interface Expressao extends Nativo {
-	public ExpressaoSimples obterValorPrimitivo();
-}
-
-interface ExpressaoSimples extends Expressao {
-	@Override
-	public default ExpressaoSimples obterValorPrimitivo() {
-		return this;
-	}
-}
-
-interface ExpressaoComplexa extends Expressao {
 }

@@ -30,120 +30,120 @@ public class Testes {
 
 	private static void testarBooleanos() {
 
-		asseverar(Booleano.processar(List.of(Booleano.VERDADEIRO)).obterValorNativo().equals(true));
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.VERDADEIRO)).obterValorNativo().equals(true));
 
-		asseverar(Booleano.processar(List.of(Booleano.FALSO)).obterValorNativo().equals(false));
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.FALSO)).obterValorNativo().equals(false));
 
-		asseverar(Booleano.processar(List.of(OperadorBooleano.NAO, Booleano.VERDADEIRO)).obterValorNativo().equals(false));
+		asseverar(Booleano.processar(List.of(OperadorBooleano.NAO, BooleanoLiteral.VERDADEIRO)).obterValorNativo().equals(false));
 
-		asseverar(Booleano.processar(List.of(OperadorBooleano.NAO, Booleano.FALSO)).obterValorNativo().equals(true));
+		asseverar(Booleano.processar(List.of(OperadorBooleano.NAO, BooleanoLiteral.FALSO)).obterValorNativo().equals(true));
 
-		asseverar(Booleano.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.E, Booleano.VERDADEIRO))
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.E, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(true));
 
-		asseverar(Booleano.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.E, Booleano.FALSO))
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.E, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(false));
 
-		asseverar(Booleano.processar(List.of(Booleano.FALSO, OperadorBooleanoBinario.E, Booleano.VERDADEIRO))
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.FALSO, OperadorBooleanoBinario.E, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(false));
 
-		asseverar(Booleano.processar(List.of(Booleano.FALSO, OperadorBooleanoBinario.E, Booleano.FALSO))
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.FALSO, OperadorBooleanoBinario.E, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(false));
 
-		asseverar(Booleano.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.OU, Booleano.VERDADEIRO))
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.OU, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(true));
 
-		asseverar(Booleano.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.OU, Booleano.FALSO))
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.OU, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(true));
 
-		asseverar(Booleano.processar(List.of(Booleano.FALSO, OperadorBooleanoBinario.OU, Booleano.VERDADEIRO))
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(true));
 
-		asseverar(Booleano.processar(List.of(Booleano.FALSO, OperadorBooleanoBinario.OU, Booleano.FALSO))
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(false));
 
-		asseverar(Booleano.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.E, Booleano.VERDADEIRO,
-				OperadorBooleanoBinario.E, Booleano.VERDADEIRO)).obterValorNativo().equals(true));
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.E, BooleanoLiteral.VERDADEIRO,
+				OperadorBooleanoBinario.E, BooleanoLiteral.VERDADEIRO)).obterValorNativo().equals(true));
 
-		asseverar(Booleano.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.E, Booleano.FALSO,
-				OperadorBooleanoBinario.E, Booleano.VERDADEIRO)).obterValorNativo().equals(false));
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.E, BooleanoLiteral.FALSO,
+				OperadorBooleanoBinario.E, BooleanoLiteral.VERDADEIRO)).obterValorNativo().equals(false));
 
 		asseverar(Booleano.processar(
-				List.of(Booleano.FALSO, OperadorBooleanoBinario.OU, Booleano.VERDADEIRO, OperadorBooleanoBinario.OU, Booleano.FALSO))
+				List.of(BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.OU, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(true));
 
-		asseverar(Booleano.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.OU, Booleano.FALSO,
-				OperadorBooleanoBinario.OU, Booleano.VERDADEIRO)).obterValorNativo().equals(true));
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.OU, BooleanoLiteral.FALSO,
+				OperadorBooleanoBinario.OU, BooleanoLiteral.VERDADEIRO)).obterValorNativo().equals(true));
 
 		asseverar(Booleano.processar(
-				List.of(Booleano.FALSO, OperadorBooleanoBinario.OU, Booleano.FALSO, OperadorBooleanoBinario.OU, Booleano.FALSO))
+				List.of(BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(false));
 
 		asseverar(Booleano
-				.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.E, OperadorBooleano.NAO, Booleano.VERDADEIRO))
+				.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.E, OperadorBooleano.NAO, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(false));
 
 		asseverar(Booleano
-				.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.E, OperadorBooleano.NAO, Booleano.FALSO))
+				.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.E, OperadorBooleano.NAO, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(true));
 
 		asseverar(Booleano
-				.processar(List.of(OperadorBooleano.NAO, Booleano.VERDADEIRO, OperadorBooleanoBinario.E, Booleano.VERDADEIRO))
+				.processar(List.of(OperadorBooleano.NAO, BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.E, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(false));
 
 		asseverar(Booleano
-				.processar(List.of(OperadorBooleano.NAO, Booleano.VERDADEIRO, OperadorBooleanoBinario.E, Booleano.FALSO))
+				.processar(List.of(OperadorBooleano.NAO, BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.E, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(false));
 
 		asseverar(Booleano
-				.processar(List.of(Booleano.FALSO, OperadorBooleanoBinario.E, OperadorBooleano.NAO, Booleano.VERDADEIRO))
+				.processar(List.of(BooleanoLiteral.FALSO, OperadorBooleanoBinario.E, OperadorBooleano.NAO, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(false));
 
-		asseverar(Booleano.processar(List.of(Booleano.FALSO, OperadorBooleanoBinario.E, OperadorBooleano.NAO, Booleano.FALSO))
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.FALSO, OperadorBooleanoBinario.E, OperadorBooleano.NAO, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(false));
 
 		asseverar(Booleano
-				.processar(List.of(OperadorBooleano.NAO, Booleano.FALSO, OperadorBooleanoBinario.E, Booleano.VERDADEIRO))
+				.processar(List.of(OperadorBooleano.NAO, BooleanoLiteral.FALSO, OperadorBooleanoBinario.E, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(true));
 
-		asseverar(Booleano.processar(List.of(OperadorBooleano.NAO, Booleano.FALSO, OperadorBooleanoBinario.E, Booleano.FALSO))
+		asseverar(Booleano.processar(List.of(OperadorBooleano.NAO, BooleanoLiteral.FALSO, OperadorBooleanoBinario.E, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(false));
 
 		asseverar(Booleano
-				.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO, Booleano.VERDADEIRO))
-				.obterValorNativo().equals(true));
-
-		asseverar(Booleano
-				.processar(List.of(Booleano.VERDADEIRO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO, Booleano.FALSO))
+				.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(true));
 
 		asseverar(Booleano
-				.processar(List.of(OperadorBooleano.NAO, Booleano.VERDADEIRO, OperadorBooleanoBinario.OU, Booleano.VERDADEIRO))
+				.processar(List.of(BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(true));
 
 		asseverar(Booleano
-				.processar(List.of(OperadorBooleano.NAO, Booleano.VERDADEIRO, OperadorBooleanoBinario.OU, Booleano.FALSO))
+				.processar(List.of(OperadorBooleano.NAO, BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.OU, BooleanoLiteral.VERDADEIRO))
+				.obterValorNativo().equals(true));
+
+		asseverar(Booleano
+				.processar(List.of(OperadorBooleano.NAO, BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.OU, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(false));
 
 		asseverar(Booleano
-				.processar(List.of(Booleano.FALSO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO, Booleano.VERDADEIRO))
+				.processar(List.of(BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(false));
 
-		asseverar(Booleano.processar(List.of(Booleano.FALSO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO, Booleano.FALSO))
+		asseverar(Booleano.processar(List.of(BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(true));
 
 		asseverar(Booleano
-				.processar(List.of(OperadorBooleano.NAO, Booleano.FALSO, OperadorBooleanoBinario.OU, Booleano.VERDADEIRO))
+				.processar(List.of(OperadorBooleano.NAO, BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, BooleanoLiteral.VERDADEIRO))
 				.obterValorNativo().equals(true));
 
-		asseverar(Booleano.processar(List.of(OperadorBooleano.NAO, Booleano.FALSO, OperadorBooleanoBinario.OU, Booleano.FALSO))
+		asseverar(Booleano.processar(List.of(OperadorBooleano.NAO, BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, BooleanoLiteral.FALSO))
 				.obterValorNativo().equals(true));
 
 		asseverar(Booleano.processar(List.of(// true && false || ! true || ! false && true && false || ! false == true
-				Booleano.VERDADEIRO, OperadorBooleanoBinario.E, Booleano.FALSO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO,
-				Booleano.VERDADEIRO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO, Booleano.FALSO, OperadorBooleanoBinario.E,
-				Booleano.VERDADEIRO, OperadorBooleanoBinario.E, Booleano.FALSO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO,
-				Booleano.FALSO)).obterValorNativo().equals(true));
+				BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.E, BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO,
+				BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO, BooleanoLiteral.FALSO, OperadorBooleanoBinario.E,
+				BooleanoLiteral.VERDADEIRO, OperadorBooleanoBinario.E, BooleanoLiteral.FALSO, OperadorBooleanoBinario.OU, OperadorBooleano.NAO,
+				BooleanoLiteral.FALSO)).obterValorNativo().equals(true));
 	}
 
 	private static void testarFuncoes() {
@@ -168,7 +168,7 @@ public class Testes {
 		Parametro a = new Parametro(), b = new Parametro();
 		Funcao g = new FuncaoLiteral(b, new ExpressaoSoma(a, b), Set.of(a));
 		Funcao f = new FuncaoLiteral(a, g, Set.of());
-		var closureG = new InvocacaoDeClosureLiteral(f, new NumeroLiteral(1)).obterValorPrimitivo();
+		var closureG = new InvocacaoDeClosureLiteral(f, new NumeroLiteral(1));
 		var retorno = new InvocacaoDeClosureLiteral(closureG, new NumeroLiteral(2));
 		asseverar(retorno.obterValorNativo().equals(3d));
 	}

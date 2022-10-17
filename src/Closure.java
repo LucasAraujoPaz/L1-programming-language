@@ -5,30 +5,30 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public interface Closure
-	extends ExpressaoSimples {
+	extends Valor {
 
-	public ExpressaoSimples aplicar(Expressao parametro);
+	public Valor aplicar(Expressao input);
 }
 
 interface InvocacaoDeClosure
-	extends ExpressaoComplexa {
+	extends Expressao {
 }
 
 class ClosureLiteral
 	implements Closure {
 	
 	public final Funcao funcao;
-	public final Map<Parametro, ExpressaoSimples> escopo;
+	public final Map<Parametro, Valor> escopo;
 	
 	public ClosureLiteral(Funcao funcao) {
 		this.funcao = funcao;
 		this.escopo = funcao.getUpvalues().stream()
-				.collect(Collectors.toMap(Function.identity(), Parametro::obterValorPrimitivo));
+				.collect(Collectors.toMap(Function.identity(), Parametro::avaliar));
 	}
 	
 	private void inverterEscopo() {
 		for (var entry : escopo.entrySet()) {
-			var valorOriginalDoParametro =  entry.getKey().valor.map(v ->  v.obterValorPrimitivo());
+			var valorOriginalDoParametro =  entry.getKey().valor;
 			var valorCapturado = Optional.ofNullable(entry.getValue());
 			entry.getKey().valor = valorCapturado;
 			entry.setValue(valorOriginalDoParametro.orElse(null));
@@ -36,7 +36,7 @@ class ClosureLiteral
 	}
 	
 	@Override
-	public ExpressaoSimples aplicar(Expressao input) {
+	public Valor aplicar(Expressao input) {
 		
 		inverterEscopo();
 		var retorno = funcao.aplicar(input);
@@ -57,29 +57,23 @@ class InvocacaoDeClosureLiteral
 	public final Expressao closure;
 	public final Expressao input;
 	
-	public InvocacaoDeClosureLiteral(Expressao closure, Expressao parametro) {
+	public InvocacaoDeClosureLiteral(Expressao closure, Expressao input) {
 		this.closure = closure;
-		this.input = parametro;
+		this.input = input;
 	}
 	
-	public ExpressaoSimples obterValorPrimitivo() {
-		return (closure instanceof Closure c ? c : (Closure) closure.obterValorPrimitivo())
+	public Valor avaliar() {
+		return ((Closure) closure.avaliar())
 				.aplicar(input);
-	}
-	
-	@Override
-	public Object obterValorNativo() {
-		return obterValorPrimitivo().obterValorNativo();
 	}
 }
 
 interface Funcao
-	extends ExpressaoSimples {
+	extends Expressao {
 
-	public ExpressaoSimples aplicar(Expressao parametro);
+	public Valor aplicar(Expressao input);
 	public Collection<Parametro> getUpvalues();
-	public Closure obterValorPrimitivo();
-
+	public Closure avaliar();
 }
 
 class FuncaoLiteral
@@ -101,34 +95,25 @@ class FuncaoLiteral
 	}
 	
 	@Override
-	public ExpressaoSimples aplicar(Expressao input) { 
+	public Valor aplicar(Expressao input) { 
 		var previo = this.parametro.valor;
-		this.parametro.valor = Optional.of(input.obterValorPrimitivo());
-		var resultado = corpo.obterValorPrimitivo();
+		this.parametro.valor = Optional.of(input.avaliar());
+		var resultado = corpo.avaliar();
 		this.parametro.valor = previo;
 		return resultado;
 	}
 
 	@Override
-	public Closure obterValorPrimitivo() {
+	public Closure avaliar() {
 		return new ClosureLiteral(this); 
-	}
-	
-	@Override
-	public Funcao obterValorNativo() {
-		return this;
 	}
 }
 
-class Parametro implements ExpressaoComplexa {
-	protected Optional<? extends Expressao> valor = Optional.empty();
+class Parametro implements Expressao {
+	protected Optional<? extends Valor> valor = Optional.empty();
 	
 	@Override
-	public ExpressaoSimples obterValorPrimitivo() {
-		return valor.get().obterValorPrimitivo();
-	}
-	@Override
-	public Object obterValorNativo() {
-		return valor.get().obterValorNativo();
+	public Valor avaliar() {
+		return valor.get();
 	}
 }
