@@ -14,13 +14,13 @@ interface InvocacaoDeClosure
 	extends Expressao {
 }
 
-class ClosureLiteral
+class ClosureImpl
 	implements Closure {
 	
 	public final Funcao funcao;
 	public final Map<Parametro, Optional<Valor>> escopo;
 	
-	public ClosureLiteral(Funcao funcao) {
+	public ClosureImpl(Funcao funcao) {
 		this.funcao = funcao;
 		this.escopo = funcao.getUpvalues().stream()
 				.collect(Collectors.toMap(Function.identity(), p -> p.valor));
@@ -51,13 +51,13 @@ class ClosureLiteral
 	}
 }
 
-class InvocacaoDeClosureLiteral
+class InvocacaoDeClosureImpl
 	implements InvocacaoDeClosure {
 	
 	public final Expressao closure;
 	public final Expressao input;
 	
-	public InvocacaoDeClosureLiteral(Expressao closure, Expressao input) {
+	public InvocacaoDeClosureImpl(Expressao closure, Expressao input) {
 		this.closure = closure;
 		this.input = input;
 	}
@@ -105,7 +105,7 @@ class FuncaoLiteral
 
 	@Override
 	public Closure avaliar() {
-		return new ClosureLiteral(this); 
+		return new ClosureImpl(this); 
 	}
 }
 

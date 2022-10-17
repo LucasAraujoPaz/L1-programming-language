@@ -3,6 +3,9 @@ import java.util.List;
 
 public interface Booleano extends Expressao {
 	
+	@Override
+	ValorBooleano avaliar();
+	
 	public static Booleano processar(final List<Object> lista) {
 
 		final List<Object> semNegacao = new ArrayList<>();
@@ -100,7 +103,7 @@ class BooleanoLiteral implements Booleano {
 		this.valor = valor;
 	}
 	@Override
-	public Valor avaliar() {
+	public ValorBooleano avaliar() {
 		return new ValorBooleano(valor);
 	}
 }
@@ -114,7 +117,7 @@ class ValorBooleano implements Valor {
 		this.valor = valor;
 	}
 	@Override
-	public Object obterValorNativo() {
+	public Boolean obterValorNativo() {
 		return valor;
 	}
 }
@@ -129,7 +132,7 @@ class ExpressaoIgual implements Booleano {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public ValorBooleano avaliar() {
 		return esquerda.avaliar().obterValorNativo().equals(direita.avaliar().obterValorNativo()) ?
 				ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
 	}
@@ -145,7 +148,7 @@ class ExpressaoDiferente implements Booleano {
 	}
 	
 	@Override
-	public Valor avaliar() {
+	public ValorBooleano avaliar() {
 		return ! esquerda.avaliar().obterValorNativo().equals(direita.avaliar().obterValorNativo()) ?
 				ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
 	}
@@ -161,7 +164,7 @@ class ExpressaoMaior implements Booleano {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public ValorBooleano avaliar() {
 		return (Double) esquerda.avaliar().obterValorNativo() > (Double) direita.avaliar().obterValorNativo() ? 
 				ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
 	}
@@ -177,7 +180,7 @@ class ExpressaoMenor implements Booleano {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public ValorBooleano avaliar() {
 		return (Double) esquerda.avaliar().obterValorNativo() < (Double) direita.avaliar().obterValorNativo() ? 
 				ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
 	}
@@ -193,7 +196,7 @@ class ExpressaoMaiorOuIgual implements Booleano {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public ValorBooleano avaliar() {
 		return (Double) esquerda.avaliar().obterValorNativo() >= (Double) direita.avaliar().obterValorNativo() ? 
 				ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
 	}
@@ -209,7 +212,7 @@ class ExpressaoMenorOuIgual implements Booleano {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public ValorBooleano avaliar() {
 		return (Double) esquerda.avaliar().obterValorNativo() <= (Double) direita.avaliar().obterValorNativo() ? 
 				ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
 	}
@@ -224,7 +227,7 @@ class ExpressaoNao implements Booleano {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public ValorBooleano avaliar() {
 		return ! (Boolean) negado.avaliar().obterValorNativo() ? 
 				ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
 	}
@@ -240,7 +243,7 @@ class ExpressaoE implements Booleano {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public ValorBooleano avaliar() {
 		return (Boolean) esquerda.avaliar().obterValorNativo() && (Boolean) direita.avaliar().obterValorNativo() ? 
 				ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
 	}
@@ -256,7 +259,7 @@ class ExpressaoOu implements Booleano {
 	}
 	
 	@Override
-	public Valor avaliar() {
+	public ValorBooleano avaliar() {
 		return (Boolean) esquerda.avaliar().obterValorNativo() || (Boolean) direita.avaliar().obterValorNativo() ? 
 				ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
 	}

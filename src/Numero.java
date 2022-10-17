@@ -4,6 +4,9 @@ import java.util.Set;
 
 public interface Numero extends Expressao {
 
+	@Override
+	NumeroReal avaliar();
+	
 	final static Set<OperadorNumerico> multiplicacaoDivisaoEModulo = Set.of(
 			OperadorNumericoBinario.MULTIPLICACAO, OperadorNumericoBinario.DIVISAO, OperadorNumericoBinario.MODULO);
 	
@@ -117,7 +120,7 @@ class NumeroReal implements Valor {
 		this.numero = numero;
 	}
 	@Override
-	public Object obterValorNativo() {
+	public Double obterValorNativo() {
 		return numero;
 	}
 }
@@ -131,7 +134,7 @@ class NumeroLiteral implements Numero {
 	}
 	
 	@Override
-	public Valor avaliar() {
+	public NumeroReal avaliar() {
 		return new NumeroReal(numero);
 	}
 }
@@ -145,7 +148,7 @@ class ExpressaoNegacaoNumerica implements Numero {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public NumeroReal avaliar() {
 		return new NumeroReal( - (Double) numero.avaliar().obterValorNativo());
 	}
 }
@@ -160,7 +163,7 @@ class ExpressaoExponenciacao implements Numero {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public NumeroReal avaliar() {
 		return new NumeroReal(Math.pow(
 				(Double) esquerda.avaliar().obterValorNativo(),
 				(Double) direita.avaliar().obterValorNativo())
@@ -178,7 +181,7 @@ class ExpressaoMultiplicacao implements Numero {
 	}
 	
 	@Override
-	public Valor avaliar() {
+	public NumeroReal avaliar() {
 		return new NumeroReal(
 				(Double) esquerda.avaliar().obterValorNativo() * 
 				(Double) direita.avaliar().obterValorNativo()
@@ -196,7 +199,7 @@ class ExpressaoDivisao implements Numero {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public NumeroReal avaliar() {
 		return new NumeroReal(
 				(Double) esquerda.avaliar().obterValorNativo() / 
 				(Double) direita.avaliar().obterValorNativo()
@@ -214,7 +217,7 @@ class ExpressaoModulo implements Numero {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public NumeroReal avaliar() {
 		return new NumeroReal(
 				(Double) esquerda.avaliar().obterValorNativo() % 
 				(Double) direita.avaliar().obterValorNativo()
@@ -232,7 +235,7 @@ class ExpressaoSoma implements Numero {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public NumeroReal avaliar() {
 		return new NumeroReal(
 				(Double) esquerda.avaliar().obterValorNativo() + 
 				(Double) direita.avaliar().obterValorNativo()
@@ -250,7 +253,7 @@ class ExpressaoSubtracao implements Numero {
 	}
 
 	@Override
-	public Valor avaliar() {
+	public NumeroReal avaliar() {
 		return new NumeroReal(
 				(Double) esquerda.avaliar().obterValorNativo() - 
 				(Double) direita.avaliar().obterValorNativo()

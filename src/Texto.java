@@ -1,4 +1,6 @@
 public interface Texto extends Expressao {
+	@Override
+	TextoAvaliado avaliar();
 }
 
 class TextoLiteral implements Texto {
@@ -24,7 +26,7 @@ class TextoAvaliado implements Valor {
 	}
 
 	@Override
-	public Object obterValorNativo() {
+	public String obterValorNativo() {
 		return texto;
 	}
 }

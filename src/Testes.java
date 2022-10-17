@@ -156,7 +156,7 @@ public class Testes {
 						List.of(new NumeroLiteral(1),
 								new ExpressaoMultiplicacao(
 										x, 
-										new InvocacaoDeClosureLiteral(
+										new InvocacaoDeClosureImpl(
 												fatorial,
 												new ExpressaoSubtracao(x, new NumeroLiteral(1))))));
 		
@@ -168,8 +168,8 @@ public class Testes {
 		Parametro a = new Parametro(), b = new Parametro();
 		Funcao g = new FuncaoLiteral(b, new ExpressaoSoma(a, b), Set.of(a));
 		Funcao f = new FuncaoLiteral(a, g, Set.of());
-		var closureG = new InvocacaoDeClosureLiteral(f, new NumeroLiteral(1));
-		var retorno = new InvocacaoDeClosureLiteral(closureG, new NumeroLiteral(2));
+		var closureG = new InvocacaoDeClosureImpl(f, new NumeroLiteral(1));
+		var retorno = new InvocacaoDeClosureImpl(closureG, new NumeroLiteral(2));
 		asseverar(retorno.obterValorNativo().equals(3d));
 	}
 
