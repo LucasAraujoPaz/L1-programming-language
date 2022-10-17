@@ -1,2 +1,2 @@
-public interface Lista extends Valor {
+public interface Lista extends Expressao {
 }
