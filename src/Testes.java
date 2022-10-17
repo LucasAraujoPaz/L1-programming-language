@@ -7,7 +7,7 @@ public class Testes {
 		testarNumeros();
 		testarBooleanos();
 		testarFuncoes();
-		System.out.println("Testes rodados.");
+		System.out.println("Testes rodados com sucesso.");
 	}
 
 	private static void testarNumeros() {

@@ -28,7 +28,7 @@ class ClosureLiteral
 	
 	private void inverterEscopo() {
 		for (var entry : escopo.entrySet()) {
-			var valorOriginalDoParametro =  entry.getKey().valor;
+			var valorOriginalDoParametro = entry.getKey().valor;
 			var valorCapturado = Optional.ofNullable(entry.getValue());
 			entry.getKey().valor = valorCapturado;
 			entry.setValue(valorOriginalDoParametro.orElse(null));
