@@ -63,11 +63,6 @@ interface OperadorNumerico {
 interface OperadorNumericoUnario extends OperadorNumerico {
 	
 	public static final OperadorNumerico
-		POSITIVO = new OperadorNumericoUnario() {
-			@Override
-			public Expressao obterExpressao(Expressao numero) {
-				return numero;
-			}},
 		NEGATIVO = new OperadorNumericoUnario() {
 			@Override
 			public Expressao obterExpressao(Expressao numero) {

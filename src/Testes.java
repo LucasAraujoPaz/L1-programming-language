@@ -22,7 +22,7 @@ public class Testes {
 				OperadorNumericoBinario.SOMA, OperadorNumericoUnario.NEGATIVO, new NumeroLiteral(8762),
 				OperadorNumericoBinario.MULTIPLICACAO, new NumeroLiteral(23), OperadorNumericoBinario.EXPONENCIACAO,
 				new NumeroLiteral(3), OperadorNumericoBinario.EXPONENCIACAO, new NumeroLiteral(4),
-				OperadorNumericoBinario.DIVISAO, OperadorNumericoUnario.POSITIVO, new NumeroLiteral(13),
+				OperadorNumericoBinario.DIVISAO, new NumeroLiteral(13),
 				OperadorNumericoBinario.MULTIPLICACAO, OperadorNumericoUnario.NEGATIVO, new NumeroLiteral(1),
 				OperadorNumericoBinario.MODULO, new NumeroLiteral(9), OperadorNumericoBinario.SUBTRACAO,
 				new NumeroLiteral(3.6))).obterValorNativo().equals(23667.2));
