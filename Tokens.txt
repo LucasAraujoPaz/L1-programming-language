@@ -1,3 +1,5 @@
+//@ts-check
+
 const TOKENS =  /** @type {const}} */ ({
     NUMBER_TYPE: /Number/,
     BOOLEAN_TYPE: /Boolean/,
@@ -42,6 +44,11 @@ const TOKENS =  /** @type {const}} */ ({
     ANYTHING_ELSE: /\S+/
 });
 
-const matcher = Object.entries(TOKENS)
+const matcher = RegExp(Object.entries(TOKENS)
     .map(value => `(?<${value[0]}>${value[1].source})`)
-    .join('|');
+    .join('|'), "g"
+);
+
+const text = ``;
+
+const iterator = text.matchAll(matcher);
