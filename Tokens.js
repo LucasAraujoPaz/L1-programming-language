@@ -47,11 +47,6 @@ const KEYWORDS = /** @type {const} */ ({
     END: "End",
 });
 
-const matcher = RegExp(Object.entries(TOKENS)
-    .map(value => `(?<${value[0]}>${value[1].source})`)
-    .join('|'), "g"
-);
-
 const text = 
 `Let factorial := 
     Function(Number x) -> Number:
@@ -65,6 +60,13 @@ const text =
 
 /** @param {string} text */
 function getTokens(text) {
+    
+    const matcher = RegExp(
+        Object.entries(TOKENS)
+        .map(entry => `(?<${entry[0]}>${entry[1].source})`)
+        .join('|'), "g"
+    );
+    
     const iterator = text.matchAll(matcher);
     
     let i = 0, line = 1;
@@ -81,7 +83,7 @@ function getTokens(text) {
     const tokens = [];
     for (const i of iterator) {
         const groups = i.groups ?? (() => { throw new Error("No group"); })();
-        const entries = Object.entries(groups).filter(e => e[1] !== undefined);
+        const entries = Object.entries(groups).filter(entry => entry[1] !== undefined);
         if (entries.length === 0) 
             throw new Error("No match");
         if (entries.length > 1)
