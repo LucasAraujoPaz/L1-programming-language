@@ -80,7 +80,7 @@ function getTokens(text) {
     /** @type {{ tokenType: string, text: string, line: number }[]} */
     const tokens = [];
     for (const i of iterator) {
-        const groups = i.groups ?? (() => { throw new Error("No group") })();
+        const groups = i.groups ?? (() => { throw new Error("No group"); })();
         const entries = Object.entries(groups).filter(e => e[1] !== undefined);
         if (entries.length === 0) 
             throw new Error("No match");
@@ -91,7 +91,7 @@ function getTokens(text) {
         if (tokenType === "WHITESPACE")
             continue;
 
-        const token = { tokenType, text, line: getLine(i.index ?? (() => { throw new Error("No index") })())};
+        const token = { tokenType, text, line: getLine(i.index ?? (() => { throw new Error("No index"); })()) };
         
         if (tokenType === "ANYTHING_ELSE") 
             throw new Error(`Unexpected symbol: "${token.text}" at line ${line}`);
