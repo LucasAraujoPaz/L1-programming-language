@@ -90,7 +90,7 @@ public interface Token {
 		
 		final ArrayList<Token> tokens = new ArrayList<>();
 		final var m = pattern.matcher(codigoFonte);
-		
+
 		find:
 		while (m.find()) {
 			for (final var tipoDeToken : TipoDeToken.values()) {
