@@ -122,7 +122,7 @@ class LineGetter {
 	int obterLinha(final int start) {
 		final int limite = Math.min(start, codigoFonte.length());
 		while (indice < limite) {
-			if (codigoFonte.charAt(indice) == '\n')
+			if (codigoFonte.charAt(indice) == Character.LINE_SEPARATOR)
 				++linha;
 			++indice;
 		}
