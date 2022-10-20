@@ -12,8 +12,8 @@ const TOKENS =  /** @type {const}} */ ({
     EXPONENTIATION: /\*\*/,
     THIN_ARROW: /->/,
 
-    LEFT_PARENTHESES: /\(/,
-    RIGHT_PARENTHESES: /\)/,
+    LEFT_PARENTHESIS: /\(/,
+    RIGHT_PARENTHESIS: /\)/,
     LEFT_BRACKET: /\[/,
     RIGHT_BRACKET: /\]/,
     NUMERIC_NEGATION: /-/,
