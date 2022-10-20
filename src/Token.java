@@ -87,7 +87,7 @@ public interface Token {
 	static ArrayList<Token> processar(final String codigoFonte) {
 		
 		final var lg = new LineGetter(codigoFonte);
-		
+
 		final ArrayList<Token> tokens = new ArrayList<>();
 		final var m = pattern.matcher(codigoFonte);
 
