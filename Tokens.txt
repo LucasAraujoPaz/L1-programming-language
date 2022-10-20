@@ -38,6 +38,7 @@ const KEYWORDS = /** @type {const} */ ({
     STRING_TYPE: "String",
     ARRAY_TYPE: "Array",
     FUNCTION_TYPE: "Function",
+    ANY_TYPE: "Any",
     LET: "Let",
     TRUE: "True",
     FALSE: "False",
@@ -54,17 +55,6 @@ const matcher = RegExp(Object.entries(TOKENS)
     .join('|'), "g"
 );
 
-const text = 
-`Let factorial := 
-    Function(Number x) -> Number:
-        If x < 2 Then
-            1
-        Else
-            x * factorial(x - 1)
-        End
-    End
-.`;
-
 function lineGetter (/** @type {string} */ text) {
     
     let i = 0, line = 1;
@@ -77,15 +67,37 @@ function lineGetter (/** @type {string} */ text) {
         }
         return line;
     }
-} 
+}
 
-/** @param {string} text */
+/** @type {{[s in KEYWORDS[keyof KEYWORDS]]: keyof KEYWORDS }} */ 
+//@ts-expect-error
+const keywordsToTypes = Object.fromEntries(
+    Object.entries(KEYWORDS).map(entry => [entry[1], entry[0]])
+);
+
+/** @type {(lexeme: string) => keyof KEYWORDS | "IDENTIFIER"} */
+function resolveIdentifier(/** @type {string} */ lexeme) {
+    return keywordsToTypes[lexeme] ?? "IDENTIFIER";
+};
+
+/** 
+ * @typedef {{
+ * tokenType: keyof Omit<TOKENS, "WHITESPACE" | "ANYTHING_ELSE"> | keyof KEYWORDS, 
+ * lexeme: string, 
+ * line: number
+ * }} Token 
+ * */
+
+/** 
+ * @param {string} text 
+ * @returns {Token[]}
+*/
 function getTokens(text) {
     const iterator = text.matchAll(matcher);
     
     const getLine = lineGetter(text);
 
-    /** @type {{ tokenType: string, text: string, line: number }[]} */
+    /** @type {Token[]} */
     const tokens = [];
     for (const i of iterator) {
         const groups = i.groups ?? (() => { throw new Error("No group") })();
@@ -94,12 +106,16 @@ function getTokens(text) {
             throw new Error("No match");
         if (entries.length > 1)
             throw new Error("More than 1 match");
-        const [ tokenType, text ] = entries[0];
+        
+        const [ tokenType, lexeme ] = entries[0];
 
         if (tokenType === "WHITESPACE")
             continue;
-
-        const token = { tokenType, text, line: getLine(i.index ?? (() => { throw new Error("No index") })())};
+        
+        const token = { 
+            tokenType: /** @type {Token["tokenType"]} */ (tokenType === "IDENTIFIER" ? resolveIdentifier(lexeme) : tokenType), 
+            lexeme,
+            line: getLine(i.index ?? (() => { throw new Error("No index") })())};
         
         if (tokenType === "ANYTHING_ELSE") 
             throw new Error(`Unexpected symbol: "${token.text}" at line ${token.line}`);
@@ -109,3 +125,16 @@ function getTokens(text) {
 
     return tokens;
 }
+
+const text = 
+`Let factorial := 
+    Function(Number x) -> Number:
+        If x < 2 Then
+            1
+        Else
+            x * factorial(x - 1)
+        End
+    End
+.`;
+
+getTokens(text);
