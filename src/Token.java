@@ -46,7 +46,12 @@ enum TipoDeToken {
 
 public interface Token {
 	record Numero(String texto, int linha) implements Token {}
-	record Texto(String texto, int linha) implements Token {}
+	record Texto(String texto, int linha) implements Token {
+		public Texto(String texto, int linha) {
+			this.texto = texto.substring(1, texto.length() - 1); 
+			this.linha = linha;
+		}
+	}
 	record Identificador(String texto, int linha) implements Token {}
 	record DefinidoComo(String texto, int linha) implements Token {}
 	record MaiorOuIgual(String texto, int linha) implements Token {}
