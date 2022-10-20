@@ -2,7 +2,7 @@
 
 const TOKENS =  /** @type {const}} */ ({
     NUMBER: /\d+(\.\d+)?/,
-    STRING: /"(?:\\"|[^"])*"/,
+    STRING: /"(?:\\"|[^"])*(?<!\\)"/,
     IDENTIFIER: /[a-zA-Z_][a-zA-Z_\d]*/,
 
     BE_DEFINED_AS: /:=/,

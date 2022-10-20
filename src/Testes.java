@@ -7,6 +7,7 @@ public class Testes {
 		testarNumeros();
 		testarBooleanos();
 		testarFuncoes();
+		testarToken();
 		System.out.println("Testes rodados com sucesso.");
 	}
 
@@ -173,6 +174,35 @@ public class Testes {
 		asseverar(retorno.obterValorNativo().equals(3d));
 	}
 
+	private static void testarToken() {
+		var codigoFonte = """
+Let number := 3.14.
+Let boolean := True Or False.
+Let string := "String".
+Let array := [1, 2, 3].
+Let factorial := 
+	Function(Number x) -> Number:
+		If x < 2 Then
+			1
+		Else
+			x * factorial(x - 1)
+		End
+	End
+.
+Let main := Function(String x) -> Number:
+	factorial(10)
+End.
+""";
+
+		var t = Token.processar(codigoFonte);
+		asseverar(t.size() == 74);
+		
+		var a = "Let x¬ := 1.";
+		var b = "Let s := \"bla \\\".";
+		asseverarQueLancaExcecao(() -> Token.processar(a), null, Throwable.class);
+		asseverarQueLancaExcecao(() -> Token.processar(b), null, Throwable.class);
+	}
+	
 	public static void asseverar(boolean condicao) {
 		asseverar(condicao, "");
 	}
@@ -182,5 +212,16 @@ public class Testes {
 			return;
 
 		throw new AssertionError(mensagem);
+	}
+	
+	public static void asseverarQueLancaExcecao(
+			Runnable s, String mensagem, Class<Throwable> c) {
+		try {
+			s.run();
+		} catch(Throwable t) {
+			asseverar(c.isInstance(t) , mensagem);
+			return;
+		}
+		asseverar(false, mensagem);
 	}
 }
