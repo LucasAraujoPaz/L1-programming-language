@@ -65,19 +65,25 @@ const text =
     End
 .`;
 
-/** @param {string} text */
-function getTokens(text) {
-    const iterator = text.matchAll(matcher);
+function lineGetter (/** @type {string} */ text) {
     
     let i = 0, line = 1;
-    const getLine = (/** @type {number} */ index) => { 
-        while (i < index && i < text.length) {
+    
+    return function getLine(/** @type {number} */ index) { 
+        while (i < Math.min(index, text.length)) {
             if (text[i] === '\n')
                 ++line;
             ++i;
         }
         return line;
     }
+} 
+
+/** @param {string} text */
+function getTokens(text) {
+    const iterator = text.matchAll(matcher);
+    
+    const getLine = lineGetter(text);
 
     /** @type {{ tokenType: string, text: string, line: number }[]} */
     const tokens = [];
@@ -96,7 +102,7 @@ function getTokens(text) {
         const token = { tokenType, text, line: getLine(i.index ?? (() => { throw new Error("No index") })())};
         
         if (tokenType === "ANYTHING_ELSE") 
-            throw new Error(`Unexpected symbol: "${token.text}" at line ${line}`);
+            throw new Error(`Unexpected symbol: "${token.text}" at line ${token.line}`);
         
         tokens.push(token);
     }
