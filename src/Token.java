@@ -109,7 +109,7 @@ public interface Token {
 			.map(tipoDeToken -> "(?<" + tipoDeToken.name() + ">" + tipoDeToken.regex + ")")
 			.collect(Collectors.joining("|")));
 	
-	static ArrayList<Token> processar(final String codigoFonte) {
+	public static ArrayList<Token> processar(final String codigoFonte) {
 		
 		final var lg = new LineGetter(codigoFonte);
 
@@ -125,7 +125,7 @@ public interface Token {
 		return tokens;
 	}
 	
-	static Optional<Token> obterToken(final Matcher m, final LineGetter lg) {
+	private static Optional<Token> obterToken(final Matcher m, final LineGetter lg) {
 		for (final var tipoDeToken : TipoDeToken.values()) {
 			final String group = m.group(tipoDeToken.name());
 			if (group == null) 

@@ -211,7 +211,7 @@ End.
 		if (condicao)
 			return;
 
-		throw new AssertionError(mensagem);
+		throw new Erro(mensagem);
 	}
 	
 	public static void asseverarQueLancaExcecao(
