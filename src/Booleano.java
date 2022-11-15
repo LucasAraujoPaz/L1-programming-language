@@ -95,16 +95,13 @@ interface OperadorBooleanoBinario extends OperadorBooleano {
 }
 
 class BooleanoLiteral implements Booleano {
-	public static final BooleanoLiteral VERDADEIRO = new BooleanoLiteral(true) {};
-	public static final BooleanoLiteral FALSO = new BooleanoLiteral(false) {};
+	public static final BooleanoLiteral VERDADEIRO = new BooleanoLiteral() {};
+	public static final BooleanoLiteral FALSO = new BooleanoLiteral() {};
 	
-	boolean valor;
-	public BooleanoLiteral(boolean valor) {
-		this.valor = valor;
-	}
 	@Override
 	public ValorBooleano avaliar() {
-		return new ValorBooleano(valor);
+		return this.equals(VERDADEIRO) ? 
+			ValorBooleano.VERDADEIRO : ValorBooleano.FALSO; 
 	}
 }
 
@@ -113,7 +110,7 @@ class ValorBooleano implements Valor {
 	public static final ValorBooleano FALSO = new ValorBooleano(false) {};
 	
 	boolean valor;
-	public ValorBooleano(boolean valor) {
+	private ValorBooleano(boolean valor) {
 		this.valor = valor;
 	}
 	@Override

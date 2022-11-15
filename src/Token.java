@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,74 +11,91 @@ import java.util.stream.Stream;
 
 /** Constantes sem underline por conta do Regex do Java */
 enum TipoDeToken {
-    NUMERO("\\d+(\\.\\d+)?"),
-    TEXTO("\"(?:\\\\\"|[^\"])*(?<!\\\\)\""),
-    IDENTIFICADOR("[a-zA-Z_][a-zA-Z_\\d]*"),
+    NUMERO("\\d+(\\.\\d+)?", Parser::simples, null, Precedencia.NENHUMA),
+    TEXTO("\"(?:\\\\\"|[^\"])*(?<!\\\\)\"", Parser::simples, null, Precedencia.NENHUMA),
+    IDENTIFICADOR("[a-zA-Z_][a-zA-Z_\\d]*", Parser::referencia, null, Precedencia.NENHUMA),
 
-    DEFINIDOCOMO(":="),
-    MAIOROUIGUAL(">="),
-    MENOROUIGUAL("<="),
-    DIFERENTE("!="),
-    EXPONENCIACAO("\\*\\*"),
-    SETAFINA("->"),
+    DEFINIDOCOMO(":=", null, null, Precedencia.NENHUMA),
+    MAIOROUIGUAL(">=", null, Parser::operadorBinario, Precedencia.COMPARACAO),
+    MENOROUIGUAL("<=", null, Parser::operadorBinario, Precedencia.COMPARACAO),
+    DIFERENTE("!=", null, Parser::operadorBinario, Precedencia.IGUALDADE),
+    EXPONENCIACAO("\\*\\*", null, Parser::operadorBinario, Precedencia.EXPONENCIACAO),
+    SETAFINA("->", null, null, Precedencia.NENHUMA),
 
-    PARENTESEESQUERDO("\\("),
-    PARENTESEDIREITO("\\)"),
-    COLCHETEESQUERDO("\\["),
-    COLCHETEDIREITO("\\]"),
-    NEGACAONUMERICA("-"),
-    NEGACAOLOGICA("!"),
-    MULTIPLICADO("\\*"),
-    DIVIDIDO("\\/"),
-    MODULO("%"),
-    MAIS("\\+"),
-    MAIOR(">"),
-    MENOR("<"),
-    IGUAL("="),
-    VIRGULA(","),
-    DOISPONTOS(":"),
-    PONTO("\\."),
-    WHITESPACE("\\s+"),
-    ERRO("\\S+");
+    PARENTESEESQUERDO("\\(", Parser::grupo, Parser::invocacao, Precedencia.INVOCACAO),
+    PARENTESEDIREITO("\\)", null, null, Precedencia.NENHUMA),
+    COLCHETEESQUERDO("\\[", Parser::lista, null, Precedencia.NENHUMA),
+    COLCHETEDIREITO("\\]", null, null, Precedencia.NENHUMA),
+    NEGACAONUMERICA("-", Parser::operadorUnario, Parser::operadorBinario, Precedencia.SOMA),
+    NEGACAOLOGICA("!", Parser::operadorUnario, null, Precedencia.NENHUMA),
+    MULTIPLICADO("\\*", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
+    DIVIDIDO("\\/", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
+    MODULO("%", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
+    MAIS("\\+", Parser::operadorUnario, Parser::operadorBinario, Precedencia.SOMA),
+    MAIOR(">", null, Parser::operadorBinario, Precedencia.COMPARACAO),
+    MENOR("<", null, Parser::operadorBinario, Precedencia.COMPARACAO),
+    IGUAL("=", null, Parser::operadorBinario, Precedencia.IGUALDADE),
+    VIRGULA(",", null, null, Precedencia.NENHUMA),
+    DOISPONTOS(":", null, null, Precedencia.NENHUMA),
+    PONTO("\\.", null, null, Precedencia.NENHUMA),
+    
+    WHITESPACE("\\s+", null, null, Precedencia.NENHUMA),
+    /** Erro precisa estar nesta posição para separar IDENTIFICADOR das keywords */
+    ERRO("\\S+", null, null, Precedencia.NENHUMA),
+    
+    NUMBER("Number", null, null, Precedencia.NENHUMA),
+    BOOLEAN("Boolean", null, null, Precedencia.NENHUMA),
+    STRING("String", null, null, Precedencia.NENHUMA),
+    ARRAY("Array", null, null, Precedencia.NENHUMA),
+    FUNCTION("Function", Parser::funcao, null, Precedencia.NENHUMA),
+    ANY("Any", null, null, Precedencia.NENHUMA),
+    LET("Let", null, null, Precedencia.NENHUMA),
+    TRUE("True", Parser::simples, null, Precedencia.NENHUMA),
+    FALSE("False", Parser::simples, null, Precedencia.NENHUMA),
+    AND("And", null, Parser::e, Precedencia.E),
+    OR("Or", null, Parser::ou, Precedencia.OU),
+    IF("If", Parser::se, null, Precedencia.NENHUMA),
+    THEN("Then", null, null, Precedencia.NENHUMA),
+    ELSE("Else", null, null, Precedencia.NENHUMA),
+    END("End", null, null, Precedencia.NENHUMA);
 	
 	final String regex;
-	
-	TipoDeToken(String regex) {
+	final Optional<Function<Parser, Expressao>> prefix;
+	final Optional<BiFunction<Parser, Expressao, Expressao>> infix;
+	final Precedencia precedencia; 
+	boolean ehPalavraReservada() {
+		return tiposDeTokenReservados.contains(this);
+	};
+
+	TipoDeToken(
+			String regex, 
+			Function<Parser, Expressao> prefix,
+			BiFunction<Parser, Expressao, Expressao> infix,
+			Precedencia precedencia) {
 		this.regex = regex;
+		this.prefix = Optional.ofNullable(prefix);
+		this.infix = Optional.ofNullable(infix);
+		this.precedencia = precedencia;
 	}
+	
+	private static Set<TipoDeToken> tiposDeTokenReservados = 
+			Set.of(NUMBER, BOOLEAN, STRING, ARRAY, FUNCTION, ANY, LET, TRUE, FALSE, AND, OR, IF, THEN, ELSE, END);
+	
+	static TipoDeToken obterPossivelPalavraReservada(TipoDeToken tipoOriginal, String texto) {
+		if (tipoOriginal != IDENTIFICADOR)
+			return tipoOriginal;
+		
+		for (var tipoDeToken : tiposDeTokenReservados)
+			if (tipoDeToken.regex.equals(texto))
+				return tipoDeToken;
+		
+		return tipoOriginal;
+	}
+	
 }
 
-enum PalavraReservada {
-    NUMBER_TYPE("Number"),
-    BOOLEAN_TYPE("Boolean"),
-    STRING_TYPE("String"),
-    ARRAY_TYPE("Array"),
-    FUNCTION_TYPE("Function"),
-    ANY_TYPE("Any"),
-    LET("Let"),
-    TRUE("True"),
-    FALSE("False"),
-    AND("And"),
-    OR("Or"),
-    IF("If"),
-    THEN("Then"),
-    ELSE("Else"),
-    END("End");
-	
-	final String keyword;
-	
-	private static final Map<String, PalavraReservada> stringParaEnum = 
-		Stream.of(PalavraReservada.values())
-		.collect(Collectors.toUnmodifiableMap(v -> v.keyword , Function.identity())
-	);
-	
-	static Optional<PalavraReservada> obterPalavraReservada(String s) {
-		return Optional.ofNullable(stringParaEnum.get(s));
-	}
-	
-	PalavraReservada(String keyword) {
-		this.keyword = keyword;
-	}
+enum Precedencia {
+	NENHUMA, OU, E, IGUALDADE, COMPARACAO, SOMA, MULTIPLICACAO, EXPONENCIACAO, INVOCACAO,
 }
 
 public interface Token {
@@ -84,21 +103,16 @@ public interface Token {
 	TipoDeToken tipo();
 	String texto();
 	int linha();
-	Optional<PalavraReservada> palavraReservada();
 	
 	record TokenImpl(
 			TipoDeToken tipo,
 			String texto, 
-			int linha, 
-			Optional<PalavraReservada> palavraReservada) implements Token {
+			int linha) implements Token {
 		
 		public TokenImpl(TipoDeToken tipo, String texto, int linha) {
-			this(
-					tipo,
-					tipo == TipoDeToken.TEXTO ? texto.substring(1, texto.length() - 1) : texto, 
-					linha, 
-					PalavraReservada.obterPalavraReservada(texto)
-			);
+			this.tipo = TipoDeToken.obterPossivelPalavraReservada(tipo, texto);
+			this.texto = tipo == TipoDeToken.TEXTO ? texto.substring(1, texto.length() - 1) : texto;
+			this.linha = linha;
 			Testes.asseverar(tipo != TipoDeToken.ERRO, 
 					"Símbolo inesperado na linha " + linha + ": \"" + texto + "\"");
 		}		
