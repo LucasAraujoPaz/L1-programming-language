@@ -120,7 +120,7 @@ public class Parser {
 	}
 	
 	public static void main(String[] args) {
-		var e = new Parser(Token.processar("2 ** 3 ** 4 - 1 + 2 - 3 * 4 / 5 % 6 ** 7")).expressao(Precedencia.NENHUMA);
+		var e = new Parser(Token.processar("2.0 ** 3.1 ** 4 - 1 + 2 - 3 * 4 / 5 % 6 ** 7")).expressao(Precedencia.NENHUMA);
 		var a = e.avaliar();
 		var n = a.obterValorNativo();
 		System.out.println(n);
