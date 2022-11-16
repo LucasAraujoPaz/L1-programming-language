@@ -35,14 +35,14 @@ public class Parser {
 	
 	private Expressao expressao(Precedencia precedencia) {
 		
-		Token tokenEsquerdo = consumir("Expressão esperada");
-		asseverar(tokenEsquerdo.tipo().prefix.isPresent(), "Expressão esperada", Optional.ofNullable(tokenEsquerdo));
+		asseverar(atual().map(t -> t.tipo().prefix.isPresent()).orElse(false), "Expressão esperada", atual());
+		Token tokenEsquerdo = consumir("");
 		
 		Expressao esquerda = tokenEsquerdo.tipo().prefix.get().apply(this);
 		
 		while (precedencia.ordinal() < precedencia().ordinal()) {
-			var operador = consumir("Operador esperado");
-			asseverar(operador.tipo().infix.isPresent(), "Operador infixo esperado", Optional.ofNullable(operador));
+			asseverar(atual().map(t -> t.tipo().infix.isPresent()).orElse(false), "Operador esperado", atual());
+			var operador = consumir("");
 			esquerda = operador.tipo().infix.get().apply(this, esquerda);
 		}
 		
@@ -120,7 +120,7 @@ public class Parser {
 	}
 	
 	public static void main(String[] args) {
-		var e = new Parser(Token.processar("2.0 ** 3.1 ** 4 - 1 + 2 - 3 * 4 / 5 % 6 ** 7")).expressao(Precedencia.NENHUMA);
+		var e = new Parser(Token.processar("2.0 ** ( ( -3.1 * 1.1) + 0.2 ) ** 4 - 1 + 2 - 3 * 4 / 5 % 6 ** 7")).expressao(Precedencia.NENHUMA);
 		var a = e.avaliar();
 		var n = a.obterValorNativo();
 		System.out.println(n);
