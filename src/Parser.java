@@ -36,13 +36,15 @@ public class Parser {
 	private Expressao expressao(Precedencia precedencia) {
 		
 		asseverar(atual().map(t -> t.tipo().prefix.isPresent()).orElse(false), "Expressão esperada", atual());
-		Token tokenEsquerdo = consumir("");
+		Token tokenEsquerdo = consumir();
 		
 		Expressao esquerda = tokenEsquerdo.tipo().prefix.get().apply(this);
 		
 		while (precedencia.ordinal() < precedencia().ordinal()) {
+			
 			asseverar(atual().map(t -> t.tipo().infix.isPresent()).orElse(false), "Operador esperado", atual());
-			var operador = consumir("");
+			var operador = consumir();
+			
 			esquerda = operador.tipo().infix.get().apply(this, esquerda);
 		}
 		
@@ -140,20 +142,23 @@ public class Parser {
 		return Optional.ofNullable(tokens.get(indice - 1));
 	}
 	
-	private Token consumir(String erro) {
-		
-		asseverar(atual().isPresent(), erro, atual());
-		
-		var token = atual().get();
+	private Token consumir() {
+		var token = atual();
+		asseverar(token.isPresent(), "", token);
 		indice++;
-		return token;
+		return token.get();
+	}
+	
+	private Token consumir(String erro) {
+		var token = atual();
+		asseverar(token.isPresent(), erro, token);
+		return consumir();
 	}
 	
 	private Token consumir(TipoDeToken tipo, String erro) {
-		
-		asseverar(atual().isPresent() && atual().get().tipo() == tipo, erro, atual());
-		
-		return consumir(erro);
+		var token = atual();
+		asseverar(token.isPresent() && token.get().tipo() == tipo, erro, token);
+		return consumir();
 	}
 	
 	private Precedencia precedencia() {
