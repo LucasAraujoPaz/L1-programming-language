@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 /** Constantes sem underline por conta do Regex do Java */
 enum TipoDeToken {
-    NUMERO("\\d+(\\.\\d+)?", Parser::simples, null, Precedencia.NENHUMA),
-    TEXTO("\"(?:\\\\\"|[^\"])*(?<!\\\\)\"", Parser::simples, null, Precedencia.NENHUMA),
+    NUMERO("\\d+(\\.\\d+)?", Parser::unidade, null, Precedencia.NENHUMA),
+    TEXTO("\"(?:\\\\\"|[^\"])*(?<!\\\\)\"", Parser::unidade, null, Precedencia.NENHUMA),
     IDENTIFICADOR("[a-zA-Z_][a-zA-Z_\\d]*", Parser::referencia, null, Precedencia.NENHUMA),
 
     DEFINIDOCOMO(":=", null, null, Precedencia.NENHUMA),
@@ -40,7 +40,7 @@ enum TipoDeToken {
     PONTO("\\.", null, null, Precedencia.NENHUMA),
     
     WHITESPACE("\\s+", null, null, Precedencia.NENHUMA),
-    /** Erro precisa estar nesta posição para separar IDENTIFICADOR das keywords */
+    /** "Erro" precisa estar nesta posição para separar IDENTIFICADOR das keywords */
     ERRO("\\S+", null, null, Precedencia.NENHUMA),
     
     NUMBER("Number", null, null, Precedencia.NENHUMA),
@@ -50,10 +50,10 @@ enum TipoDeToken {
     FUNCTION("Function", Parser::funcao, null, Precedencia.NENHUMA),
     ANY("Any", null, null, Precedencia.NENHUMA),
     LET("Let", null, null, Precedencia.NENHUMA),
-    TRUE("True", Parser::simples, null, Precedencia.NENHUMA),
-    FALSE("False", Parser::simples, null, Precedencia.NENHUMA),
-    AND("And", null, Parser::e, Precedencia.E),
-    OR("Or", null, Parser::ou, Precedencia.OU),
+    TRUE("True", Parser::unidade, null, Precedencia.NENHUMA),
+    FALSE("False", Parser::unidade, null, Precedencia.NENHUMA),
+    AND("And", null, Parser::operadorBinario, Precedencia.E),
+    OR("Or", null, Parser::operadorBinario, Precedencia.OU),
     IF("If", Parser::se, null, Precedencia.NENHUMA),
     THEN("Then", null, null, Precedencia.NENHUMA),
     ELSE("Else", null, null, Precedencia.NENHUMA),
@@ -95,7 +95,7 @@ enum TipoDeToken {
 }
 
 enum Precedencia {
-	NENHUMA, OU, E, IGUALDADE, COMPARACAO, SOMA, MULTIPLICACAO, EXPONENCIACAO, INVOCACAO,
+	NENHUMA, OU, E, IGUALDADE, COMPARACAO, SOMA, MULTIPLICACAO, EXPONENCIACAO, UNARIO, INVOCACAO,
 }
 
 public interface Token {

@@ -20,7 +20,6 @@ public class Parser {
 	}
 	
 	private Declaracao declaracao() {
-		
 		consumir(TipoDeToken.LET, "Declarações começam com Let");
 		
 		var nome = consumir(TipoDeToken.IDENTIFICADOR, "Declaração necessita de identificador");
@@ -37,7 +36,7 @@ public class Parser {
 	private Expressao expressao(int precedencia) {
 		
 		Token tokenEsquerdo = consumir("Expressão esperada");
-		asseverar(tokenEsquerdo.tipo().infix.isPresent(), "Expressão esperada", Optional.ofNullable(tokenEsquerdo));
+		asseverar(tokenEsquerdo.tipo().prefix.isPresent(), "Expressão esperada", Optional.ofNullable(tokenEsquerdo));
 		
 		Expressao esquerda = tokenEsquerdo.tipo().prefix.get().apply(this);
 		
@@ -50,6 +49,41 @@ public class Parser {
 		return esquerda;
 	}
 	
+	Expressao unidade() {
+		throw new UnsupportedOperationException();
+	}
+	
+	Expressao referencia() {
+		throw new UnsupportedOperationException();
+	}
+	
+	Expressao grupo() {
+		throw new UnsupportedOperationException();
+	}
+	
+	Expressao lista() {
+		throw new UnsupportedOperationException();
+	}
+	
+	Expressao operadorUnario() {
+		throw new UnsupportedOperationException();
+	}
+	
+	Expressao operadorBinario(Expressao esquerda) {
+		throw new UnsupportedOperationException();
+	}
+
+	Expressao se() {
+		throw new UnsupportedOperationException();
+	}
+	
+	Expressao funcao() {
+		throw new UnsupportedOperationException();
+	}
+	
+	Expressao invocacao(Expressao esquerda) {
+		throw new UnsupportedOperationException();
+	}
 	
 	private Optional<Token> atual() {
 		if (indice >= tokens.size())
@@ -75,7 +109,7 @@ public class Parser {
 	}
 	
 	private int precedencia() {
-		return atual().map(token -> token.tipo().precedencia.ordinal()).orElse(0);
+		return atual().map(token -> token.tipo().precedencia.ordinal()).orElse(Precedencia.NENHUMA.ordinal());
 	}
 	
 	private static void asseverar(boolean condicao, String mensagem, Optional<Token> token) {
