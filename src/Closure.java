@@ -10,10 +10,6 @@ public interface Closure
 	public Valor aplicar(Expressao input);
 }
 
-interface InvocacaoDeClosure
-	extends Expressao {
-}
-
 class ClosureImpl
 	implements Closure {
 	
@@ -49,6 +45,10 @@ class ClosureImpl
 	public Closure obterValorNativo() {
 		return this;
 	}
+}
+
+interface InvocacaoDeClosure
+	extends Expressao {
 }
 
 class InvocacaoDeClosureImpl

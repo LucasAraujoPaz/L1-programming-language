@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -15,11 +14,11 @@ enum TipoDeToken {
     TEXTO("\"(?:\\\\\"|[^\"])*(?<!\\\\)\"", Parser::unidade, null, Precedencia.NENHUMA),
     IDENTIFICADOR("[a-zA-Z_][a-zA-Z_\\d]*", Parser::referencia, null, Precedencia.NENHUMA),
 
-    DEFINIDOCOMO(":=", null, null, Precedencia.NENHUMA),
+    EXPONENCIACAO("\\*\\*", null, Parser::operadorBinario, Precedencia.EXPONENCIACAO),
     MAIOROUIGUAL(">=", null, Parser::operadorBinario, Precedencia.COMPARACAO),
     MENOROUIGUAL("<=", null, Parser::operadorBinario, Precedencia.COMPARACAO),
     DIFERENTE("!=", null, Parser::operadorBinario, Precedencia.IGUALDADE),
-    EXPONENCIACAO("\\*\\*", null, Parser::operadorBinario, Precedencia.EXPONENCIACAO),
+    DEFINIDOCOMO(":=", null, null, Precedencia.NENHUMA),
     SETAFINA("->", null, null, Precedencia.NENHUMA),
 
     PARENTESEESQUERDO("\\(", Parser::grupo, Parser::invocacao, Precedencia.INVOCACAO),
@@ -31,7 +30,7 @@ enum TipoDeToken {
     MULTIPLICADO("\\*", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
     DIVIDIDO("\\/", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
     MODULO("%", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
-    MAIS("\\+", Parser::operadorUnario, Parser::operadorBinario, Precedencia.SOMA),
+    MAIS("\\+", null, Parser::operadorBinario, Precedencia.SOMA),
     MAIOR(">", null, Parser::operadorBinario, Precedencia.COMPARACAO),
     MENOR("<", null, Parser::operadorBinario, Precedencia.COMPARACAO),
     IGUAL("=", null, Parser::operadorBinario, Precedencia.IGUALDADE),
@@ -62,7 +61,7 @@ enum TipoDeToken {
 	final String regex;
 	final Optional<Function<Parser, Expressao>> prefix;
 	final Optional<BiFunction<Parser, Expressao, Expressao>> infix;
-	final Precedencia precedencia; 
+	final Precedencia precedenciaInfix; 
 	boolean ehPalavraReservada() {
 		return tiposDeTokenReservados.contains(this);
 	};
@@ -71,11 +70,11 @@ enum TipoDeToken {
 			String regex, 
 			Function<Parser, Expressao> prefix,
 			BiFunction<Parser, Expressao, Expressao> infix,
-			Precedencia precedencia) {
+			Precedencia precedenciaInfix) {
 		this.regex = regex;
 		this.prefix = Optional.ofNullable(prefix);
 		this.infix = Optional.ofNullable(infix);
-		this.precedencia = precedencia;
+		this.precedenciaInfix = precedenciaInfix;
 	}
 	
 	private static Set<TipoDeToken> tiposDeTokenReservados = 
