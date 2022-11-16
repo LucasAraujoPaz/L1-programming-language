@@ -143,7 +143,7 @@ public interface Token {
 			final String group = m.group(tipoDeToken.name());
 			if (group == null) 
 				continue;
-			if (tipoDeToken.name().equals(TipoDeToken.WHITESPACE.name()))
+			if (tipoDeToken == TipoDeToken.WHITESPACE)
 				return Optional.empty();
 			final int linha = lg.obterLinha(m.start());
 			final Token token = new TokenImpl(tipoDeToken, group, linha);
