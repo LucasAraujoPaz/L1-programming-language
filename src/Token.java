@@ -123,14 +123,23 @@ public interface Token {
 			.collect(Collectors.joining("|")));
 	
 	public static ArrayList<Token> processar(final String codigoFonte) {
-		
-		final var lg = new LineGetter(codigoFonte);
 
+		int[] linha = {1}, indice = {0};
+		Function<Integer, Integer> obterLinha = (start) -> {
+			final int limite = Math.min(start, codigoFonte.length());
+			while (indice[0] < limite) {
+				if (codigoFonte.charAt(indice[0]) == '\n')
+					++linha[0];
+				++indice[0];
+			}
+			return linha[0];
+		};
+		
 		final ArrayList<Token> tokens = new ArrayList<>();
 		final var m = pattern.matcher(codigoFonte);
 
 		while (m.find()) {
-			Optional<Token> token = obterToken(m, lg);
+			Optional<Token> token = obterToken(m, obterLinha);
 			if (token.isPresent())
 				tokens.add(token.get());
 		}
@@ -138,37 +147,18 @@ public interface Token {
 		return tokens;
 	}
 	
-	private static Optional<Token> obterToken(final Matcher m, final LineGetter lg) {
+	private static Optional<Token> obterToken(final Matcher m, final Function<Integer, Integer> obterLinha) {
 		for (final var tipoDeToken : TipoDeToken.values()) {
 			final String group = m.group(tipoDeToken.name());
 			if (group == null) 
 				continue;
 			if (tipoDeToken == TipoDeToken.WHITESPACE)
 				return Optional.empty();
-			final int linha = lg.obterLinha(m.start());
+			final int linha = obterLinha.apply(m.start());
 			final Token token = new TokenImpl(tipoDeToken, group, linha);
 			return Optional.of(token);
 		}
 		Testes.asseverar(false, "Erro processando símbolo no índice " + m.start());
 		return Optional.empty();
 	}
-}
-
-class LineGetter { 
-	private final String codigoFonte; 
-	private int linha = 1, indice = 0;
-	
-	public LineGetter(final String codigoFonte) {
-		this.codigoFonte = codigoFonte;
-	}
-	
-	int obterLinha(final int start) {
-		final int limite = Math.min(start, codigoFonte.length());
-		while (indice < limite) {
-			if (codigoFonte.charAt(indice) == '\n')
-				++linha;
-			++indice;
-		}
-		return linha;
-	} 
 }

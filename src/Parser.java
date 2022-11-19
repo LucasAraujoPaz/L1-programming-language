@@ -110,7 +110,26 @@ public class Parser {
 	}
 
 	Expressao se() {
-		throw new UnsupportedOperationException();
+		var condicoes = new ArrayList<Expressao>();
+		var corpos = new ArrayList<Expressao>();
+		
+		final Runnable r = () -> {
+			condicoes.add(expressao(Precedencia.NENHUMA));
+			consumir(TipoDeToken.THEN, "Está faltando o Then");
+			corpos.add(expressao(Precedencia.NENHUMA));
+			consumir(TipoDeToken.ELSE, "Está faltando o Else");
+		};
+		
+		r.run();
+		
+		while (atual().isPresent() && atual().get().tipo() == TipoDeToken.IF) {
+			consumir();
+			r.run();
+		}
+
+		corpos.add(expressao(Precedencia.NENHUMA));
+		
+		return new ExpressaoSeSenao(condicoes, corpos);
 	}
 	
 	Expressao funcao() {
@@ -122,7 +141,7 @@ public class Parser {
 	}
 	
 	public static void main(String[] args) {
-		var e = new Parser(Token.processar("2.0 ** ( ( -3.1 * 1.1) + 0.2 ) ** 4 - 1 + 2 - 3 * 4 / 5 % 6 ** 7")).expressao(Precedencia.NENHUMA);
+		var e = new Parser(Token.processar("If 1 = 3 Then 10 Else If 1 = 2 Then 20 Else If 1 = 1 Then 30 Else 40")).expressao(Precedencia.NENHUMA);
 		var a = e.avaliar();
 		var n = a.obterValorNativo();
 		System.out.println(n);
@@ -147,12 +166,6 @@ public class Parser {
 		asseverar(token.isPresent(), "", token);
 		indice++;
 		return token.get();
-	}
-	
-	private Token consumir(String erro) {
-		var token = atual();
-		asseverar(token.isPresent(), erro, token);
-		return consumir();
 	}
 	
 	private Token consumir(TipoDeToken tipo, String erro) {
