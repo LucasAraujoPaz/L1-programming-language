@@ -149,7 +149,7 @@ public class Testes {
 
 	private static void testarFuncoes() {
 		// Let fatorial := x => x < 2 ? 1 : x * fatorial(x - 1). 
-		var x = new Parametro();
+		var x = new Parametro("x");
 		var fatorial = new FuncaoLiteral(x, null, Set.of());
 		var corpo = 
 				new ExpressaoSeSenao(
@@ -157,7 +157,7 @@ public class Testes {
 						List.of(new NumeroLiteral(1),
 								new ExpressaoMultiplicacao(
 										x, 
-										new InvocacaoDeClosureImpl(
+										new InvocacaoImpl(
 												fatorial,
 												new ExpressaoSubtracao(x, new NumeroLiteral(1))))));
 		
@@ -166,11 +166,11 @@ public class Testes {
 		
 		// Let f := a => b => a + b.
 		// f(1)(2) = 3
-		Parametro a = new Parametro(), b = new Parametro();
+		Parametro a = new Parametro("a"), b = new Parametro("b");
 		Funcao g = new FuncaoLiteral(b, new ExpressaoSoma(a, b), Set.of(a));
 		Funcao f = new FuncaoLiteral(a, g, Set.of());
-		var closureG = new InvocacaoDeClosureImpl(f, new NumeroLiteral(1));
-		var retorno = new InvocacaoDeClosureImpl(closureG, new NumeroLiteral(2));
+		var closureG = new InvocacaoImpl(f, new NumeroLiteral(1));
+		var retorno = new InvocacaoImpl(closureG, new NumeroLiteral(2));
 		asseverar(retorno.obterValorNativo().equals(3d));
 	}
 
@@ -199,8 +199,8 @@ End.
 		
 		var a = "Let x¬ := 1.";
 		var b = "Let s := \"bla \\\".";
-		asseverarQueLancaExcecao(() -> Token.processar(a), null, Throwable.class);
-		asseverarQueLancaExcecao(() -> Token.processar(b), null, Throwable.class);
+		asseverarQueLancaExcecao(() -> Token.processar(a), "", Throwable.class);
+		asseverarQueLancaExcecao(() -> Token.processar(b), "", Throwable.class);
 	}
 	
 	public static void asseverar(boolean condicao) {

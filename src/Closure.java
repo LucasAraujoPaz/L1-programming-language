@@ -47,23 +47,23 @@ class ClosureImpl
 	}
 }
 
-interface InvocacaoDeClosure
+interface Invocacao
 	extends Expressao {
 }
 
-class InvocacaoDeClosureImpl
-	implements InvocacaoDeClosure {
+class InvocacaoImpl
+	implements Invocacao {
 	
-	public final Expressao closure;
+	public final Expressao invocavel;
 	public final Expressao input;
 	
-	public InvocacaoDeClosureImpl(Expressao closure, Expressao input) {
-		this.closure = closure;
+	public InvocacaoImpl(Expressao closure, Expressao input) {
+		this.invocavel = closure;
 		this.input = input;
 	}
 	
 	public Valor avaliar() {
-		return ((Closure) closure.avaliar())
+		return ((Closure) invocavel.avaliar())
 				.aplicar(input);
 	}
 }
@@ -74,6 +74,7 @@ interface Funcao
 	public Valor aplicar(Expressao input);
 	public Collection<Parametro> getUpvalues();
 	public Closure avaliar();
+	Parametro obterParametro();
 }
 
 class FuncaoLiteral
@@ -107,11 +108,19 @@ class FuncaoLiteral
 	public Closure avaliar() {
 		return new ClosureImpl(this); 
 	}
+
+	@Override
+	public Parametro obterParametro() {
+		return this.parametro;
+	}
 }
 
 class Parametro implements Expressao {
 	protected Optional<Valor> valor = Optional.empty();
-	
+	final String nome;
+	public Parametro(String nome) {
+		this.nome = nome;
+	}
 	@Override
 	public Valor avaliar() {
 		return valor.get();

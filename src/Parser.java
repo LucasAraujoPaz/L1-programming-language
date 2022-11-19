@@ -1,13 +1,37 @@
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 
 public class Parser {
 
 	private final ArrayList<Token> tokens;
 	private int indice = 0;
+	private Contexto contexto = new Contexto(Optional.empty(), Optional.empty());
 	
 	private Parser(ArrayList<Token> tokens) {
 		this.tokens = tokens;
+	}
+	
+	public static void main(String[] args) {
+		var e = new Parser(Token.processar(
+"""
+Let x := 
+	(
+		Function (Any x) -> Any:
+			x + 1
+		End
+	)(1)
+.
+
+Let main := Function (Any args) -> Any:
+		x
+	End
+.
+""")).programa().get(0).expressao();
+		
+		var a = e.avaliar();
+		var n = a.obterValorNativo();
+		System.out.println(n);
 	}
 	
 	public ArrayList<Declaracao> programa() {
@@ -22,15 +46,17 @@ public class Parser {
 	private Declaracao declaracao() {
 		consumir(TipoDeToken.LET, "Declarações começam com Let");
 		
-		var nome = consumir(TipoDeToken.IDENTIFICADOR, "Declaração necessita de identificador");
-		asseverar( ! nome.tipo().ehPalavraReservada(), "Nome declarado não pode ser palavra reservada", Optional.of(nome));
-		
+		var identificador = consumir(TipoDeToken.IDENTIFICADOR, "Declaração necessita de identificador");
+		asseverar( ! identificador.tipo().ehPalavraReservada(), "Nome declarado não pode ser palavra reservada", Optional.of(identificador));
+
 		consumir(TipoDeToken.DEFINIDOCOMO, "Declaração necessita de :=");
 		var expressao = expressao(Precedencia.NENHUMA);
 		
+		contexto.declarar(identificador, expressao);
+		
 		consumir(TipoDeToken.PONTO, "Declaração encerra com .");
 		
-		return new Declaracao(nome, expressao);
+		return new Declaracao(identificador, expressao);
 	}
 	
 	private Expressao expressao(Precedencia precedencia) {
@@ -63,7 +89,7 @@ public class Parser {
 	}
 	
 	Expressao referencia() {
-		throw new UnsupportedOperationException();
+		return contexto.obter(anterior().get());
 	}
 	
 	Expressao grupo() {
@@ -129,22 +155,54 @@ public class Parser {
 
 		corpos.add(expressao(Precedencia.NENHUMA));
 		
+		consumir(TipoDeToken.END, "End esperado após expressão condicional");
+		
 		return new ExpressaoSeSenao(condicoes, corpos);
 	}
-	
+
+	@SuppressWarnings("unused")
 	Expressao funcao() {
-		throw new UnsupportedOperationException();
+		
+		consumir(TipoDeToken.PARENTESEESQUERDO, "Parêntese esquerdo necessário depois de Function");
+		var tipoDoParametro = tipo();
+		var parametro = consumir(TipoDeToken.IDENTIFICADOR, "Nome do parâmetro esperado");
+		consumir(TipoDeToken.PARENTESEDIREITO, "Parêntese direito necessário depois do parâmetro");
+		consumir(TipoDeToken.SETAFINA, "Use seta para indicar o retorno da função");
+		var tipoDoRetorno = tipo();
+		consumir(TipoDeToken.DOISPONTOS, "Use dois pontos \":\" antes de começar o corpo da função");
+		
+		var funcao = new FuncaoLiteral(new Parametro(parametro.texto()), null, new ArrayList<>());
+		this.contexto = new Contexto(Optional.ofNullable(this.contexto), Optional.ofNullable(funcao));
+		var corpo = expressao(Precedencia.NENHUMA);
+		this.contexto = this.contexto.pai.get();
+		funcao.corpo = corpo;
+		consumir(TipoDeToken.END, "End esperado como término da função");
+		
+		return funcao; 
 	}
-	
+
+	// TODO
+	private Expressao tipo() { 
+		asseverar(atual().isPresent(), "Tipo esperado", atual());
+		final var token = consumir();
+		var tipos = Set.of("Number", "Boolean", "String", "Array", "Function", "Any");
+		Expressao retorno = switch (token.texto()) {
+			case "Number" -> null;
+			case "Boolean" -> null;
+			case "String" -> null;
+			case "Array" -> null;
+			case "Function" -> null;
+			case "Any" -> null;
+			default -> null;
+		};
+		asseverar(tipos.contains(token.texto()), "Tipo inválido", atual());
+		return retorno;
+	}
+
 	Expressao invocacao(Expressao esquerda) {
-		throw new UnsupportedOperationException();
-	}
-	
-	public static void main(String[] args) {
-		var e = new Parser(Token.processar("If 1 = 3 Then 10 Else If 1 = 2 Then 20 Else If 1 = 1 Then 30 Else 40")).expressao(Precedencia.NENHUMA);
-		var a = e.avaliar();
-		var n = a.obterValorNativo();
-		System.out.println(n);
+		var argumento = expressao(Precedencia.NENHUMA);
+		consumir(TipoDeToken.PARENTESEDIREITO, "Use parêntese direito após argumento da invocação");
+		return new InvocacaoImpl(esquerda, argumento);
 	}
 	
 	private Optional<Token> atual() {
@@ -178,7 +236,7 @@ public class Parser {
 		return atual().map(token -> token.tipo().precedenciaInfix).orElse(Precedencia.NENHUMA);
 	}
 	
-	private static void asseverar(boolean condicao, String mensagem, Optional<Token> token) {
+	static void asseverar(boolean condicao, String mensagem, Optional<Token> token) {
 		
 		if (condicao)
 			return;
