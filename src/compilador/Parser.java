@@ -25,7 +25,7 @@ Let f :=
 		End
 	End
 .
-
+Let sum := Function (Any x) -> Any: Function (Any y) -> Any : x + y End End.
 Let main := Function (Any args) -> Any:
 		f(11)
 	End
