@@ -13,37 +13,42 @@ public class Parser {
 	}
 	
 	public static void main(String[] args) {
-		rodar(
+		rodar("Teste",
 """
-Let sum := 
-	Function (Number x) -> Any:
-		Function (Number y) -> Number:
-			x + y
+Let f := 
+	Function (Any x) -> Any:
+		If x < 2 Then
+			1
+		Else
+			f(x - 2) + f(x - 1)
 		End
 	End
 .
 
-Let sum1 := sum(1).
-Let sum3 := sum(3).
 Let main := Function (Any args) -> Any:
-		sum1(4) + sum3(5) * sum1(9)
+		f(10)
 	End
 .
 """);
 	}
 	
-	public static String rodar(String codigoFonte) {
+	public static String rodar(final String input, final String codigoFonte) {
+		var funcaoMain = checar(codigoFonte);
+		var closureMain = (Closure) funcaoMain.avaliar();
+		var resultado = closureMain.aplicar(new TextoLiteral(input));
+		var textualizado = resultado.obterValorNativo().toString();
+		System.out.println(textualizado);
+		return textualizado;
+	}
+	
+	private static Funcao checar(final String codigoFonte) {
 		var tokens = Token.processar(codigoFonte);
 		var parser = new Parser(tokens);
 		var programa = parser.programa();
 		asseverar(programa.size() > 0, "É necessário declarar a função main", Optional.empty());
 		var funcaoMain = programa.get(programa.size() - 1).expressao();
 		asseverar(funcaoMain instanceof Funcao, "A última declaração do arquivo deve ser a função \"main\"", Optional.empty());
-		var closureMain = (Closure) funcaoMain.avaliar();
-		var resultado = closureMain.aplicar(new TextoLiteral("Teste"));
-		var textualizado = resultado.obterValorNativo().toString();
-		System.out.println(textualizado);
-		return textualizado;
+		return (Funcao) funcaoMain;
 	}
 	
 	private ArrayList<Declaracao> programa() {
@@ -62,15 +67,24 @@ Let main := Function (Any args) -> Any:
 		asseverar( ! identificador.tipo().ehPalavraReservada(), "Nome declarado não pode ser palavra reservada", Optional.of(identificador));
 
 		consumir(TipoDeToken.DEFINIDOCOMO, "Declaração necessita de :=");
-		var expressao = expressao(Precedencia.NENHUMA);
 		
-		contexto.declarar(identificador, expressao);
+		final Expressao expressao;
+		if (atual().isPresent() && atual().get().tipo() == TipoDeToken.FUNCTION) {
+			consumir();
+			var funcao = cabecalhoDeFuncao();
+			contexto.declarar(identificador, funcao);
+			funcao.corpo = corpoDeFuncao(funcao);
+			expressao = funcao;
+		} else {
+			expressao = expressao(Precedencia.NENHUMA);
+			contexto.declarar(identificador, expressao);
+		}
 		
 		consumir(TipoDeToken.PONTO, "Declaração encerra com .");
 		
 		return new Declaracao(identificador, expressao);
 	}
-	
+
 	private Expressao expressao(Precedencia precedencia) {
 		
 		asseverar(atual().map(t -> t.tipo().prefix.isPresent()).orElse(false), "Expressão esperada", atual());
@@ -172,8 +186,7 @@ Let main := Function (Any args) -> Any:
 		return new ExpressaoSeSenao(condicoes, corpos);
 	}
 
-	Expressao funcao() {
-		
+	private FuncaoLiteral cabecalhoDeFuncao() {
 		consumir(TipoDeToken.PARENTESEESQUERDO, "Parêntese esquerdo necessário depois de Function");
 		var tipoDoParametro = tipo();
 		var parametro = consumir(TipoDeToken.IDENTIFICADOR, "Nome do parâmetro esperado");
@@ -182,13 +195,20 @@ Let main := Function (Any args) -> Any:
 		var tipoDoRetorno = tipo();
 		consumir(TipoDeToken.DOISPONTOS, "Use dois pontos \":\" antes de começar o corpo da função");
 		
-		var funcao = new FuncaoLiteral(new Parametro(parametro.texto()), null, new ArrayList<>());
+		return new FuncaoLiteral(new Parametro(parametro.texto()), null, new ArrayList<>());
+	}
+	
+	private Expressao corpoDeFuncao(Funcao funcao) {
 		this.contexto = new Contexto(Optional.ofNullable(this.contexto), Optional.ofNullable(funcao));
 		var corpo = expressao(Precedencia.NENHUMA);
 		this.contexto = this.contexto.pai.get();
-		funcao.corpo = corpo;
 		consumir(TipoDeToken.END, "End esperado como término da função");
-		
+		return corpo;
+	}
+	
+	Expressao funcao() {
+		var funcao = cabecalhoDeFuncao();
+		funcao.corpo = corpoDeFuncao(funcao);
 		return funcao; 
 	}
 
