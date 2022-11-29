@@ -226,7 +226,7 @@ Let main := Function (Any args) -> Any:
 			case "Any" -> null;
 			default -> null;
 		};
-		asseverar(tipos.contains(token.texto()), "Tipo inválido", atual());
+		asseverar(tipos.contains(token.texto()), "Tipo inválido", Optional.ofNullable(token));
 		return retorno;
 	}
 
