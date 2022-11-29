@@ -1,3 +1,4 @@
+package compilador;
 interface Expressao {
 	public Valor avaliar();
 	public default Object obterValorNativo() {

@@ -1,97 +1,9 @@
-import java.util.ArrayList;
-import java.util.List;
+package compilador;
 
 public interface Booleano extends Expressao {
 	
 	@Override
-	ValorBooleano avaliar();
-	
-	public static Booleano processar(final List<Object> lista) {
-
-		final List<Object> semNegacao = new ArrayList<>();
-		for (int i = 0; i < lista.size(); ++i) {
-			if (lista.get(i) == OperadorBooleano.NAO)
-				semNegacao.add(new ExpressaoNao((Booleano) lista.get(i++ + 1)));
-			else
-				semNegacao.add(lista.get(i));
-		}
-
-		final List<Object> semE = new ArrayList<>();
-		for (int i = 0; i < semNegacao.size(); ++i) {
-			if (semNegacao.get(i) == OperadorBooleanoBinario.E)
-				semE.add(new ExpressaoE((Booleano) semE.remove(semE.size() - 1), (Booleano) semNegacao.get(i++ + 1)));
-			else
-				semE.add(semNegacao.get(i));
-		}
-
-		Booleano semOu = (Booleano) semE.get(0);
-		for (int i = 1; i < semE.size(); i += 2) {
-			semOu = new ExpressaoOu(semOu, (Booleano) semE.get(i + 1));
-		}
-
-		return semOu;
-	}	
-}
-
-interface OperadorBooleano {
-
-	public static final OperadorBooleano
-		NAO = new OperadorBooleano() {};
-}
-
-interface OperadorBooleanoBinario extends OperadorBooleano {
-
-	public static final OperadorBooleanoBinario
-		IGUAL = new OperadorBooleanoBinario() {
-			@Override
-			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
-				return new ExpressaoIgual(esquerda, direita);
-			}
-		}, 
-		DIFERENTE = new OperadorBooleanoBinario() {
-			@Override
-			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
-				return new ExpressaoDiferente(esquerda, direita);
-			}
-		}, 
-		MAIOR = new OperadorBooleanoBinario() {
-			@Override
-			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
-				return new ExpressaoMaior((Numero) esquerda, (Numero) direita);
-			}
-		},
-		MENOR = new OperadorBooleanoBinario() {
-			@Override
-			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
-				return new ExpressaoMenor((Numero) esquerda, (Numero) direita);
-			}
-		},
-		MAIOR_OU_IGUAL = new OperadorBooleanoBinario() {
-			@Override
-			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
-				return new ExpressaoMaiorOuIgual((Numero) esquerda, (Numero) direita);
-			}
-		},
-		MENOR_OU_IGUAL = new OperadorBooleanoBinario() {
-			@Override
-			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
-				return new ExpressaoMenorOuIgual((Numero) esquerda, (Numero) direita);
-			}
-		},
-		E = new OperadorBooleanoBinario() {
-			@Override
-			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
-				return new ExpressaoE((Booleano) esquerda, (Booleano) direita);
-			}
-		}, 
-		OU = new OperadorBooleanoBinario() {
-			@Override
-			public Booleano obterExpressao(Expressao esquerda, Expressao direita) {
-				return new ExpressaoDiferente(esquerda, direita);
-			}
-		};
-	
-	public Booleano obterExpressao(final Expressao esquerda, final Expressao direita);
+	ValorBooleano avaliar();	
 }
 
 class BooleanoLiteral implements Booleano {

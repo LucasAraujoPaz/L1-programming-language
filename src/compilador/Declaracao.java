@@ -1,3 +1,4 @@
+package compilador;
 import java.util.Optional;
 
 public class Declaracao implements Expressao {

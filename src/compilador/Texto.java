@@ -1,3 +1,4 @@
+package compilador;
 public interface Texto extends Expressao {
 	@Override
 	TextoAvaliado avaliar();

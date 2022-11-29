@@ -1,17 +1,16 @@
+package compilador;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public interface Closure
-	extends Valor {
+public interface Closure extends Valor {
 
 	public Valor aplicar(Expressao input);
 }
 
-class ClosureImpl
-	implements Closure {
+class ClosureImpl implements Closure {
 	
 	public final Funcao funcao;
 	public final Map<Parametro, Optional<Valor>> escopo;
@@ -47,12 +46,10 @@ class ClosureImpl
 	}
 }
 
-interface Invocacao
-	extends Expressao {
+interface Invocacao extends Expressao {
 }
 
-class InvocacaoImpl
-	implements Invocacao {
+class InvocacaoImpl implements Invocacao {
 	
 	public final Expressao invocavel;
 	public final Expressao input;
@@ -68,8 +65,7 @@ class InvocacaoImpl
 	}
 }
 
-interface Funcao
-	extends Expressao {
+interface Funcao extends Expressao {
 
 	public Valor aplicar(Expressao input);
 	public Collection<Parametro> getUpvalues();
@@ -78,8 +74,7 @@ interface Funcao
 	Parametro obterParametro();
 }
 
-class FuncaoLiteral
-	implements Funcao {
+class FuncaoLiteral implements Funcao {
 
 	public final Parametro parametro;
 	public Expressao corpo;
@@ -124,7 +119,7 @@ class FuncaoLiteral
 }
 
 class Parametro implements Expressao {
-	protected Optional<Valor> valor = Optional.empty();
+	Optional<Valor> valor = Optional.empty();
 	final String nome;
 	public Parametro(String nome) {
 		this.nome = nome;

@@ -1,3 +1,4 @@
+package compilador;
 class Erro extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
