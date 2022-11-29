@@ -16,7 +16,7 @@ class Contexto {
 	
 	void declarar(Token token, Expressao expressao) {
 		String nome = token.texto();
-		Parser.asseverar( ! tabelaDeSimbolos.containsKey(nome), "Não é possível redeclarar nome", Optional.ofNullable(token));
+		Parser.asseverar( ! tabelaDeSimbolos.containsKey(nome), "Não é possível redeclarar nome " + nome, Optional.ofNullable(token));
 		this.tabelaDeSimbolos.put(nome, expressao);
 	}
 	
@@ -24,10 +24,15 @@ class Contexto {
 		String nome = token.texto();
 		final boolean possui = tabelaDeSimbolos.containsKey(nome);
 		
-		if ( ! possui && pai.isPresent())
-			return pai.get().obter(token);
+		if ( ! possui && pai.isPresent()) {
+			var vindoDoPai = pai.get().obter(token);
+			if (funcao.isPresent() && vindoDoPai instanceof Parametro p) {
+				funcao.get().putUpvalue(p);
+			}
+			return vindoDoPai;
+		}
 		
-		Parser.asseverar(possui, "Não há referência a esse nome", Optional.ofNullable(token));
+		Parser.asseverar(possui, "Nome não declarado: " + nome, Optional.ofNullable(token));
 		return tabelaDeSimbolos.get(nome);
 	}
 }

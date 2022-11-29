@@ -13,28 +13,40 @@ public class Parser {
 	}
 	
 	public static void main(String[] args) {
-		var e = new Parser(Token.processar(
+		rodar(
 """
-Let x := 
-	(
-		Function (Any x) -> Any:
-			x + 1
+Let sum := 
+	Function (Number x) -> Any:
+		Function (Number y) -> Number:
+			x + y
 		End
-	)(1)
-.
-
-Let main := Function (Any args) -> Any:
-		x
 	End
 .
-""")).programa().get(0).expressao();
-		
-		var a = e.avaliar();
-		var n = a.obterValorNativo();
-		System.out.println(n);
+
+Let sum1 := sum(1).
+Let sum3 := sum(3).
+Let main := Function (Any args) -> Any:
+		sum1(4) + sum3(5) * sum1(9)
+	End
+.
+""");
 	}
 	
-	public ArrayList<Declaracao> programa() {
+	public static String rodar(String codigoFonte) {
+		var tokens = Token.processar(codigoFonte);
+		var parser = new Parser(tokens);
+		var programa = parser.programa();
+		asseverar(programa.size() > 0, "É necessário declarar a função main", Optional.empty());
+		var funcaoMain = programa.get(programa.size() - 1).expressao();
+		asseverar(funcaoMain instanceof Funcao, "A última declaração do arquivo deve ser a função \"main\"", Optional.empty());
+		var closureMain = (Closure) funcaoMain.avaliar();
+		var resultado = closureMain.aplicar(new TextoLiteral("Teste"));
+		var textualizado = resultado.obterValorNativo().toString();
+		System.out.println(textualizado);
+		return textualizado;
+	}
+	
+	private ArrayList<Declaracao> programa() {
 		var declaracoes = new ArrayList<Declaracao>();
 		
 		while (atual().isPresent())
@@ -160,7 +172,6 @@ Let main := Function (Any args) -> Any:
 		return new ExpressaoSeSenao(condicoes, corpos);
 	}
 
-	@SuppressWarnings("unused")
 	Expressao funcao() {
 		
 		consumir(TipoDeToken.PARENTESEESQUERDO, "Parêntese esquerdo necessário depois de Function");
@@ -241,7 +252,7 @@ Let main := Function (Any args) -> Any:
 		if (condicao)
 			return;
 		
-		var complemento = token.isPresent() ? "Linha: " + token.get().linha() + ": " : "Fim do arquivo: ";
+		var complemento = token.isPresent() ? "Linha " + token.get().linha() + ": " : "Fim do arquivo: ";
 		
 		Testes.asseverar(condicao, complemento + mensagem);
 	}

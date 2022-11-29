@@ -57,8 +57,8 @@ class InvocacaoImpl
 	public final Expressao invocavel;
 	public final Expressao input;
 	
-	public InvocacaoImpl(Expressao closure, Expressao input) {
-		this.invocavel = closure;
+	public InvocacaoImpl(Expressao invocavel, Expressao input) {
+		this.invocavel = invocavel;
 		this.input = input;
 	}
 	
@@ -73,6 +73,7 @@ interface Funcao
 
 	public Valor aplicar(Expressao input);
 	public Collection<Parametro> getUpvalues();
+	public void putUpvalue(Parametro parametro);
 	public Closure avaliar();
 	Parametro obterParametro();
 }
@@ -94,7 +95,14 @@ class FuncaoLiteral
 	public Collection<Parametro> getUpvalues() {
 		return upvalues;
 	}
-	
+
+	@Override
+	public void putUpvalue(Parametro parametro) {
+		if (upvalues.contains(parametro))
+			return;
+		upvalues.add(parametro);
+	}
+
 	@Override
 	public Valor aplicar(Expressao input) { 
 		var previo = this.parametro.valor;
