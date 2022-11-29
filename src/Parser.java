@@ -26,29 +26,31 @@ Let f :=
 .
 
 Let main := Function (Any args) -> Any:
-		f(10)
+		f(11)
 	End
 .
 """);
 	}
-	
-	public static String rodar(final String input, final String codigoFonte) {
-		var funcaoMain = checar(codigoFonte);
-		var closureMain = (Closure) funcaoMain.avaliar();
-		var resultado = closureMain.aplicar(new TextoLiteral(input));
-		var textualizado = resultado.obterValorNativo().toString();
-		System.out.println(textualizado);
-		return textualizado;
-	}
-	
-	private static Funcao checar(final String codigoFonte) {
+
+	public static Declaracao checar(final String codigoFonte) {
 		var tokens = Token.processar(codigoFonte);
 		var parser = new Parser(tokens);
 		var programa = parser.programa();
 		asseverar(programa.size() > 0, "É necessário declarar a função main", Optional.empty());
-		var funcaoMain = programa.get(programa.size() - 1).expressao();
-		asseverar(funcaoMain instanceof Funcao, "A última declaração do arquivo deve ser a função \"main\"", Optional.empty());
-		return (Funcao) funcaoMain;
+		var declaracaoMain = programa.get(programa.size() - 1);
+		var funcaoMain = declaracaoMain.expressao;
+		asseverar(declaracaoMain.token.texto().equals("main") && funcaoMain instanceof Funcao, 
+				"A última declaração do arquivo deve ser a função \"main\"", Optional.empty());
+		return declaracaoMain;
+	}
+	
+	public static String rodar(final String input, final String codigoFonte) {
+		var declaracaoMain = checar(codigoFonte);
+		var closureMain = (Closure) declaracaoMain.avaliar();
+		var resultado = closureMain.aplicar(new TextoLiteral(input));
+		var textualizado = resultado.obterValorNativo().toString();
+		System.out.println(textualizado);
+		return textualizado;
 	}
 	
 	private ArrayList<Declaracao> programa() {
@@ -69,20 +71,21 @@ Let main := Function (Any args) -> Any:
 		consumir(TipoDeToken.DEFINIDOCOMO, "Declaração necessita de :=");
 		
 		final Expressao expressao;
+		final Declaracao declaracao;
 		if (atual().isPresent() && atual().get().tipo() == TipoDeToken.FUNCTION) {
 			consumir();
 			var funcao = cabecalhoDeFuncao();
-			contexto.declarar(identificador, funcao);
+			declaracao = contexto.declarar(identificador, funcao);
 			funcao.corpo = corpoDeFuncao(funcao);
 			expressao = funcao;
 		} else {
 			expressao = expressao(Precedencia.NENHUMA);
-			contexto.declarar(identificador, expressao);
+			declaracao = contexto.declarar(identificador, expressao);
 		}
 		
 		consumir(TipoDeToken.PONTO, "Declaração encerra com .");
 		
-		return new Declaracao(identificador, expressao);
+		return declaracao;
 	}
 
 	private Expressao expressao(Precedencia precedencia) {
@@ -217,6 +220,8 @@ Let main := Function (Any args) -> Any:
 		asseverar(atual().isPresent(), "Tipo esperado", atual());
 		final var token = consumir();
 		var tipos = Set.of("Number", "Boolean", "String", "Array", "Function", "Any");
+		asseverar(tipos.contains(token.texto()), "Tipo inválido", Optional.ofNullable(token));
+		
 		Expressao retorno = switch (token.texto()) {
 			case "Number" -> null;
 			case "Boolean" -> null;
@@ -226,7 +231,7 @@ Let main := Function (Any args) -> Any:
 			case "Any" -> null;
 			default -> null;
 		};
-		asseverar(tipos.contains(token.texto()), "Tipo inválido", Optional.ofNullable(token));
+		
 		return retorno;
 	}
 

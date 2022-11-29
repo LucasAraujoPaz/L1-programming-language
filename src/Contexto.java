@@ -14,10 +14,12 @@ class Contexto {
 			tabelaDeSimbolos.put(funcao.get().obterParametro().nome, funcao.get().obterParametro());
 	}
 	
-	void declarar(Token token, Expressao expressao) {
+	Declaracao declarar(Token token, Expressao expressao) {
 		String nome = token.texto();
 		Parser.asseverar( ! tabelaDeSimbolos.containsKey(nome), "Não é possível redeclarar nome " + nome, Optional.ofNullable(token));
-		this.tabelaDeSimbolos.put(nome, expressao);
+		var declaracao = new Declaracao(token, expressao);
+		this.tabelaDeSimbolos.put(nome, declaracao);
+		return declaracao;
 	}
 	
 	Expressao obter(Token token) {
