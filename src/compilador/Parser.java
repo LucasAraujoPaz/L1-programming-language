@@ -1,5 +1,6 @@
 package compilador;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,20 +17,23 @@ public class Parser {
 	public static void main(String[] args) {
 		rodar("Teste",
 """
-Let f := 
-	Function (Any x) -> Any:
+Let number := 3.14.
+Let boolean := True Or False.
+Let string := "String".
+Let array := [1, 2, 3].
+Let factorial := 
+	Function(Number x) -> Number:
 		If x < 2 Then
 			1
 		Else
-			f(x - 2) + f(x - 1)
+			x * factorial(x - 1)
 		End
 	End
 .
-Let sum := Function (Any x) -> Any: Function (Any y) -> Any : x + y End End.
-Let main := Function (Any args) -> Any:
-		f(11)
-	End
-.
+
+Let main := Function(String x) -> Number:
+	factorial(10)
+End.
 """);
 	}
 
@@ -130,7 +134,15 @@ Let main := Function (Any args) -> Any:
 	}
 	
 	Expressao lista() {
-		throw new UnsupportedOperationException();
+		final var lista = new LinkedList<Expressao>();
+		while (atual().map(token -> token.tipo() != TipoDeToken.COLCHETEDIREITO).orElse(false)) {
+			var expressao = expressao(Precedencia.NENHUMA);
+			lista.add(expressao);
+			if (atual().map(token -> token.tipo() == TipoDeToken.VIRGULA).orElse(false))
+				consumir();
+		}
+		consumir(TipoDeToken.COLCHETEDIREITO, "Colchete direito esperado para fechar lista");
+		return new ListaLiteral(lista);
 	}
 	
 	Expressao operadorUnario() {
@@ -217,20 +229,20 @@ Let main := Function (Any args) -> Any:
 	}
 
 	// TODO
-	private Expressao tipo() { 
+	private Tipo tipo() { 
 		asseverar(atual().isPresent(), "Tipo esperado", atual());
 		final var token = consumir();
 		var tipos = Set.of("Number", "Boolean", "String", "Array", "Function", "Any");
 		asseverar(tipos.contains(token.texto()), "Tipo inválido", Optional.ofNullable(token));
 		
-		Expressao retorno = switch (token.texto()) {
-			case "Number" -> null;
-			case "Boolean" -> null;
-			case "String" -> null;
-			case "Array" -> null;
-			case "Function" -> null;
-			case "Any" -> null;
-			default -> null;
+		Tipo retorno = switch (token.texto()) {
+			case "Number" -> Tipo.NUMERO;
+			case "Boolean" -> Tipo.BOOLEANO;
+			case "String" -> Tipo.TEXTO;
+			case "Array" -> new Tipo.Lista();
+			case "Function" -> new Tipo.Funcao();
+			case "Any" -> Tipo.QUALQUER;
+			default -> throw new IllegalArgumentException();
 		};
 		
 		return retorno;

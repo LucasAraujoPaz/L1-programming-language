@@ -42,7 +42,7 @@ public class Testes {
 		Funcao f = new FuncaoLiteral(a, g, Set.of());
 		var closureG = new InvocacaoImpl(f, new NumeroLiteral(1));
 		var retorno = new InvocacaoImpl(closureG, new NumeroLiteral(2));
-		asseverar(retorno.obterValorNativo().equals(3d));
+		asseverar(retorno.avaliar().obterValorNativo().equals(3d));
 	}
 
 	private static void testarToken() {
