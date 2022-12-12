@@ -73,7 +73,7 @@ End.
 		var identificador = consumir(TipoDeToken.IDENTIFICADOR, "Declaração necessita de identificador");
 		asseverar( ! identificador.tipo().ehPalavraReservada(), "Nome declarado não pode ser palavra reservada", Optional.of(identificador));
 
-		consumir(TipoDeToken.DEFINIDOCOMO, "Declaração necessita de :=");
+		consumir(TipoDeToken.DEFINIDO_COMO, "Declaração necessita de :=");
 		
 		final Expressao expressao;
 		final Declaracao declaracao;
@@ -128,28 +128,28 @@ End.
 	
 	Expressao grupo() {
 		var agrupado = expressao(Precedencia.NENHUMA);
-		consumir(TipoDeToken.PARENTESEDIREITO, "Parêntese direito esperado");
+		consumir(TipoDeToken.PARENTESE_DIREITO, "Parêntese direito esperado");
 		
 		return agrupado;
 	}
 	
 	Expressao lista() {
 		final var lista = new LinkedList<Expressao>();
-		while (atual().map(token -> token.tipo() != TipoDeToken.COLCHETEDIREITO).orElse(false)) {
+		while (atual().map(token -> token.tipo() != TipoDeToken.COLCHETE_DIREITO).orElse(false)) {
 			var expressao = expressao(Precedencia.NENHUMA);
 			lista.add(expressao);
 			if (atual().map(token -> token.tipo() == TipoDeToken.VIRGULA).orElse(false))
 				consumir();
 		}
-		consumir(TipoDeToken.COLCHETEDIREITO, "Colchete direito esperado para fechar lista");
+		consumir(TipoDeToken.COLCHETE_DIREITO, "Colchete direito esperado para fechar lista");
 		return new ListaLiteral(lista);
 	}
 	
 	Expressao operadorUnario() {
 		var token = anterior().get();
 		return switch (token.tipo()) {
-			case NEGACAONUMERICA -> new ExpressaoNegacaoNumerica(expressao(Precedencia.EXPONENCIACAO)); 
-			case NEGACAOLOGICA -> new ExpressaoNao(expressao(Precedencia.EXPONENCIACAO));
+			case NEGACAO_NUMERICA -> new ExpressaoNegacaoNumerica(expressao(Precedencia.EXPONENCIACAO)); 
+			case NEGACAO_LOGICA -> new ExpressaoNao(expressao(Precedencia.EXPONENCIACAO));
 			default -> throw new IllegalArgumentException();
 		};
 	}
@@ -164,11 +164,11 @@ End.
 			case DIVIDIDO -> new ExpressaoDivisao(esquerda, expressao(Precedencia.MULTIPLICACAO));
 			case MODULO -> new ExpressaoModulo(esquerda, expressao(Precedencia.MULTIPLICACAO));
 			case MAIS -> new ExpressaoSoma(esquerda, expressao(Precedencia.SOMA));
-			case NEGACAONUMERICA -> new ExpressaoSubtracao(esquerda, expressao(Precedencia.SOMA));
+			case NEGACAO_NUMERICA -> new ExpressaoSubtracao(esquerda, expressao(Precedencia.SOMA));
 			case MAIOR -> new ExpressaoMaior(esquerda, expressao(Precedencia.COMPARACAO));
 			case MENOR -> new ExpressaoMenor(esquerda, expressao(Precedencia.COMPARACAO));
-			case MAIOROUIGUAL -> new ExpressaoMaiorOuIgual(esquerda, expressao(Precedencia.COMPARACAO)); 
-			case MENOROUIGUAL -> new ExpressaoMenorOuIgual(esquerda, expressao(Precedencia.COMPARACAO));
+			case MAIOR_OU_IGUAL -> new ExpressaoMaiorOuIgual(esquerda, expressao(Precedencia.COMPARACAO)); 
+			case MENOR_OU_IGUAL -> new ExpressaoMenorOuIgual(esquerda, expressao(Precedencia.COMPARACAO));
 			case IGUAL -> new ExpressaoIgual(esquerda, expressao(Precedencia.IGUALDADE));
 			case DIFERENTE -> new ExpressaoDiferente(esquerda, expressao(Precedencia.IGUALDADE));
 			case AND -> new ExpressaoE(esquerda, expressao(Precedencia.E));
@@ -203,13 +203,13 @@ End.
 	}
 
 	private FuncaoLiteral cabecalhoDeFuncao() {
-		consumir(TipoDeToken.PARENTESEESQUERDO, "Parêntese esquerdo necessário depois de Function");
+		consumir(TipoDeToken.PARENTESE_ESQUERDO, "Parêntese esquerdo necessário depois de Function");
 		var tipoDoParametro = tipo();
 		var parametro = consumir(TipoDeToken.IDENTIFICADOR, "Nome do parâmetro esperado");
-		consumir(TipoDeToken.PARENTESEDIREITO, "Parêntese direito necessário depois do parâmetro");
-		consumir(TipoDeToken.SETAFINA, "Use seta para indicar o retorno da função");
+		consumir(TipoDeToken.PARENTESE_DIREITO, "Parêntese direito necessário depois do parâmetro");
+		consumir(TipoDeToken.SETA_FINA, "Use seta para indicar o retorno da função");
 		var tipoDoRetorno = tipo();
-		consumir(TipoDeToken.DOISPONTOS, "Use dois pontos \":\" antes de começar o corpo da função");
+		consumir(TipoDeToken.DOIS_PONTOS, "Use dois pontos \":\" antes de começar o corpo da função");
 		
 		return new FuncaoLiteral(new Parametro(parametro.texto()), null, new ArrayList<>());
 	}
@@ -250,7 +250,7 @@ End.
 
 	Expressao invocacao(Expressao esquerda) {
 		var argumento = expressao(Precedencia.NENHUMA);
-		consumir(TipoDeToken.PARENTESEDIREITO, "Use parêntese direito após argumento da invocação");
+		consumir(TipoDeToken.PARENTESE_DIREITO, "Use parêntese direito após argumento da invocação");
 		return new InvocacaoImpl(esquerda, argumento);
 	}
 	

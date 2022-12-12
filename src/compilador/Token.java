@@ -9,25 +9,24 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** Constantes sem underline por conta do Regex do Java */
 enum TipoDeToken {
     NUMERO("\\d+(\\.\\d+)?", Parser::unidade, null, Precedencia.NENHUMA),
     TEXTO("\"(?:\\\\\"|[^\"])*(?<!\\\\)\"", Parser::unidade, null, Precedencia.NENHUMA),
     IDENTIFICADOR("[a-zA-Z_][a-zA-Z_\\d]*", Parser::referencia, null, Precedencia.NENHUMA),
 
     EXPONENCIACAO("\\*\\*", null, Parser::operadorBinario, Precedencia.EXPONENCIACAO),
-    MAIOROUIGUAL(">=", null, Parser::operadorBinario, Precedencia.COMPARACAO),
-    MENOROUIGUAL("<=", null, Parser::operadorBinario, Precedencia.COMPARACAO),
+    MAIOR_OU_IGUAL(">=", null, Parser::operadorBinario, Precedencia.COMPARACAO),
+    MENOR_OU_IGUAL("<=", null, Parser::operadorBinario, Precedencia.COMPARACAO),
     DIFERENTE("!=", null, Parser::operadorBinario, Precedencia.IGUALDADE),
-    DEFINIDOCOMO(":=", null, null, Precedencia.NENHUMA),
-    SETAFINA("->", null, null, Precedencia.NENHUMA),
+    DEFINIDO_COMO(":=", null, null, Precedencia.NENHUMA),
+    SETA_FINA("->", null, null, Precedencia.NENHUMA),
 
-    PARENTESEESQUERDO("\\(", Parser::grupo, Parser::invocacao, Precedencia.INVOCACAO),
-    PARENTESEDIREITO("\\)", null, null, Precedencia.NENHUMA),
-    COLCHETEESQUERDO("\\[", Parser::lista, null, Precedencia.NENHUMA),
-    COLCHETEDIREITO("\\]", null, null, Precedencia.NENHUMA),
-    NEGACAONUMERICA("-", Parser::operadorUnario, Parser::operadorBinario, Precedencia.SOMA),
-    NEGACAOLOGICA("!", Parser::operadorUnario, null, Precedencia.NENHUMA),
+    PARENTESE_ESQUERDO("\\(", Parser::grupo, Parser::invocacao, Precedencia.INVOCACAO),
+    PARENTESE_DIREITO("\\)", null, null, Precedencia.NENHUMA),
+    COLCHETE_ESQUERDO("\\[", Parser::lista, null, Precedencia.NENHUMA),
+    COLCHETE_DIREITO("\\]", null, null, Precedencia.NENHUMA),
+    NEGACAO_NUMERICA("-", Parser::operadorUnario, Parser::operadorBinario, Precedencia.SOMA),
+    NEGACAO_LOGICA("!", Parser::operadorUnario, null, Precedencia.NENHUMA),
     MULTIPLICADO("\\*", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
     DIVIDIDO("\\/", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
     MODULO("%", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
@@ -36,7 +35,7 @@ enum TipoDeToken {
     MENOR("<", null, Parser::operadorBinario, Precedencia.COMPARACAO),
     IGUAL("=", null, Parser::operadorBinario, Precedencia.IGUALDADE),
     VIRGULA(",", null, null, Precedencia.NENHUMA),
-    DOISPONTOS(":", null, null, Precedencia.NENHUMA),
+    DOIS_PONTOS(":", null, null, Precedencia.NENHUMA),
     PONTO("\\.", null, null, Precedencia.NENHUMA),
     
     WHITESPACE("\\s+", null, null, Precedencia.NENHUMA),
@@ -120,7 +119,7 @@ public interface Token {
 	
 	final Pattern pattern = Pattern.compile(
 			Stream.of(TipoDeToken.values())
-			.map(tipoDeToken -> "(?<" + tipoDeToken.name() + ">" + tipoDeToken.regex + ")")
+			.map(tipoDeToken -> "(?<TIPO" + tipoDeToken.ordinal() + ">" + tipoDeToken.regex + ")")
 			.collect(Collectors.joining("|")));
 	
 	public static ArrayList<Token> processar(final String codigoFonte) {
@@ -150,7 +149,7 @@ public interface Token {
 	
 	private static Optional<Token> obterToken(final Matcher m, final Function<Integer, Integer> obterLinha) {
 		for (final var tipoDeToken : TipoDeToken.values()) {
-			final String group = m.group(tipoDeToken.name());
+			final String group = m.group("TIPO" + tipoDeToken.ordinal());
 			if (group == null) 
 				continue;
 			if (tipoDeToken == TipoDeToken.WHITESPACE)
