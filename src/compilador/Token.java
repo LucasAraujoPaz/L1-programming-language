@@ -113,7 +113,7 @@ public interface Token {
 			this.texto = tipo == TipoDeToken.TEXTO ? texto.substring(1, texto.length() - 1) : texto;
 			this.linha = linha;
 			Testes.asseverar(tipo != TipoDeToken.ERRO, 
-					"Símbolo inesperado na linha " + linha + ": \"" + texto + "\"");
+					"Símbolo inesperado na linha " + linha + ": " + texto);
 		}		
 	}
 	

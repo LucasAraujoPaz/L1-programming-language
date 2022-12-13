@@ -14,30 +14,6 @@ public class Parser {
 	private Parser(ArrayList<Token> tokens) {
 		this.tokens = tokens;
 	}
-	
-	public static void main(String[] args) {
-		final String output = rodar("Teste",
-"""
-Let number := 3.14.
-Let boolean := True Or False.
-Let string := "String".
-Let array := [1, 2, 3].
-Let factorial := 
-	Function(Number x) -> Number:
-		If x < 2 Then
-			1
-		Else
-			x * factorial(x - 1)
-		End
-	End
-.
-
-Let main := Function(String x) -> Any:
-	factorial(10)
-End.
-""");
-		System.out.println(output);
-	}
 
 	public static Declaracao checar(final String codigoFonte) {
 		var tokens = Token.processar(codigoFonte);
@@ -50,7 +26,7 @@ End.
 				"A última declaração do arquivo deve ser a função \"main\"", Optional.empty());
 		return declaracaoMain;
 	}
-	
+
 	public static String rodar(final String input, final String codigoFonte) {
 		var declaracaoMain = checar(codigoFonte);
 		var closureMain = (Closure) declaracaoMain.avaliar();
@@ -58,7 +34,7 @@ End.
 		var textualizado = resultado.obterValorNativo().toString();
 		return textualizado;
 	}
-	
+
 	private ArrayList<Declaracao> programa() {
 		var declaracoes = new ArrayList<Declaracao>();
 		

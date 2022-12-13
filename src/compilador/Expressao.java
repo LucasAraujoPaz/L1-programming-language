@@ -1,4 +1,5 @@
 package compilador;
+
 interface Expressao {
 	public Valor avaliar();
 }

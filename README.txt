@@ -1,5 +1,3 @@
-# compilador
-
 Let number := 3.14.
 Let boolean := True Or False.
 Let string := "String".
