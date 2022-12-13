@@ -10,7 +10,7 @@ public class L1 {
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		
-		final String instrucoesDeUso = "Uso: \n" + "check <file> \n" + "run <input> <file>\n"; 
+		final String instrucoesDeUso = "Uso: \n" + "check <file> \n" + "run <input> <file> \n"; 
 		
 		Testes.asseverar(args.length > 0, instrucoesDeUso);
 	    final String comando = args[0];
