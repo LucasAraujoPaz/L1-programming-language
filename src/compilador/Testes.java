@@ -35,7 +35,7 @@ public class Testes {
 												fatorial,
 												new OperadorBinario(x, new TokenImpl(TipoDeToken.MENOS, "-", 0), new NumeroLiteral(1))))));
 		
-		fatorial.corpo = corpo;
+		fatorial.setCorpo(corpo);
 		asseverar(fatorial.aplicar(new NumeroLiteral(6)).obterValorNativo().equals(720d));
 		
 		// Let f := a => b => a + b.

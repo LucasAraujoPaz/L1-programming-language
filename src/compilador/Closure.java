@@ -71,13 +71,13 @@ interface Funcao extends Expressao {
 	public Collection<Parametro> getUpvalues();
 	public void putUpvalue(Parametro parametro);
 	public Closure avaliar();
-	Parametro obterParametro();
+	Parametro getParametro();
 }
 
 class FuncaoLiteral implements Funcao {
 
 	public final Parametro parametro;
-	public Expressao corpo;
+	private Expressao corpo;
 	public final Collection<Parametro> upvalues;
 	
 	public FuncaoLiteral(Parametro parametro, Expressao corpo, Collection<Parametro> upvalues) {
@@ -113,8 +113,12 @@ class FuncaoLiteral implements Funcao {
 	}
 
 	@Override
-	public Parametro obterParametro() {
+	public Parametro getParametro() {
 		return this.parametro;
+	}
+	
+	public void setCorpo(final Expressao corpo) {
+		this.corpo = corpo;
 	}
 }
 

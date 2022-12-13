@@ -81,7 +81,7 @@ End.
 			consumir();
 			var funcao = cabecalhoDeFuncao();
 			declaracao = contexto.declarar(identificador, funcao);
-			funcao.corpo = corpoDeFuncao(funcao);
+			funcao.setCorpo( corpoDeFuncao(funcao) );
 			expressao = funcao;
 		} else {
 			expressao = expressao(Precedencia.NENHUMA);
@@ -226,7 +226,7 @@ End.
 	
 	Expressao funcao() {
 		var funcao = cabecalhoDeFuncao();
-		funcao.corpo = corpoDeFuncao(funcao);
+		funcao.setCorpo( corpoDeFuncao(funcao) );
 		return funcao; 
 	}
 

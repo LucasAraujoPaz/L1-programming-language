@@ -12,7 +12,7 @@ class Contexto {
 		this.pai = pai;
 		this.funcao = funcao;
 		if (funcao.isPresent())
-			tabelaDeSimbolos.put(funcao.get().obterParametro().nome, funcao.get().obterParametro());
+			tabelaDeSimbolos.put(funcao.get().getParametro().nome, funcao.get().getParametro());
 	}
 	
 	Declaracao declarar(Token token, Expressao expressao) {
