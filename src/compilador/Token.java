@@ -25,12 +25,11 @@ enum TipoDeToken {
     PARENTESE_DIREITO("\\)", null, null, Precedencia.NENHUMA),
     COLCHETE_ESQUERDO("\\[", Parser::lista, null, Precedencia.NENHUMA),
     COLCHETE_DIREITO("\\]", null, null, Precedencia.NENHUMA),
-    NEGACAO_NUMERICA("-", Parser::operadorUnario, Parser::operadorBinario, Precedencia.SOMA),
-    NEGACAO_LOGICA("!", Parser::operadorUnario, null, Precedencia.NENHUMA),
     MULTIPLICADO("\\*", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
     DIVIDIDO("\\/", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
     MODULO("%", null, Parser::operadorBinario, Precedencia.MULTIPLICACAO),
     MAIS("\\+", null, Parser::operadorBinario, Precedencia.SOMA),
+    MENOS("-", Parser::operadorUnario, Parser::operadorBinario, Precedencia.SOMA),
     MAIOR(">", null, Parser::operadorBinario, Precedencia.COMPARACAO),
     MENOR("<", null, Parser::operadorBinario, Precedencia.COMPARACAO),
     IGUAL("=", null, Parser::operadorBinario, Precedencia.IGUALDADE),
@@ -51,6 +50,7 @@ enum TipoDeToken {
     LET("Let", null, null, Precedencia.NENHUMA),
     TRUE("True", Parser::unidade, null, Precedencia.NENHUMA),
     FALSE("False", Parser::unidade, null, Precedencia.NENHUMA),
+    NOT("Not", Parser::operadorUnario, null, Precedencia.NENHUMA),
     AND("And", null, Parser::operadorBinario, Precedencia.E),
     OR("Or", null, Parser::operadorBinario, Precedencia.OU),
     IF("If", Parser::se, null, Precedencia.NENHUMA),
@@ -78,7 +78,7 @@ enum TipoDeToken {
 	}
 	
 	private static Set<TipoDeToken> tiposDeTokenReservados = 
-			Set.of(NUMBER, BOOLEAN, STRING, ARRAY, FUNCTION, ANY, LET, TRUE, FALSE, AND, OR, IF, THEN, ELSE, END);
+			Set.of(NUMBER, BOOLEAN, STRING, ARRAY, FUNCTION, ANY, LET, TRUE, FALSE, NOT, AND, OR, IF, THEN, ELSE, END);
 	
 	static TipoDeToken obterPossivelPalavraReservada(TipoDeToken tipoOriginal, String texto) {
 		if (tipoOriginal != IDENTIFICADOR)

@@ -15,7 +15,7 @@ public class Parser {
 	}
 	
 	public static void main(String[] args) {
-		rodar("Teste",
+		final String output = rodar("Teste",
 """
 Let number := 3.14.
 Let boolean := True Or False.
@@ -35,6 +35,7 @@ Let main := Function(String x) -> Number:
 	factorial(10)
 End.
 """);
+		System.out.println(output);
 	}
 
 	public static Declaracao checar(final String codigoFonte) {
@@ -54,7 +55,6 @@ End.
 		var closureMain = (Closure) declaracaoMain.avaliar();
 		var resultado = closureMain.aplicar(new TextoLiteral(input));
 		var textualizado = resultado.obterValorNativo().toString();
-		System.out.println(textualizado);
 		return textualizado;
 	}
 	
@@ -147,34 +147,36 @@ End.
 	
 	Expressao operadorUnario() {
 		var token = anterior().get();
-		return switch (token.tipo()) {
-			case NEGACAO_NUMERICA -> new ExpressaoNegacaoNumerica(expressao(Precedencia.EXPONENCIACAO)); 
-			case NEGACAO_LOGICA -> new ExpressaoNao(expressao(Precedencia.EXPONENCIACAO));
+		Precedencia precedencia = switch (token.tipo()) {
+			case MENOS -> Precedencia.EXPONENCIACAO; 
+			case NOT -> Precedencia.EXPONENCIACAO;
 			default -> throw new IllegalArgumentException();
 		};
+		return new OperadorUnario(token, expressao(precedencia));
 	}
 	
 	Expressao operadorBinario(Expressao esquerda) {
 		var token = anterior().get();
-		return switch (token.tipo()) {
+		Precedencia precedencia = switch (token.tipo()) {
 			
-			case EXPONENCIACAO -> new ExpressaoExponenciacao(esquerda, expressao(Precedencia.MULTIPLICACAO));
+			case EXPONENCIACAO -> Precedencia.MULTIPLICACAO;
 			
-			case MULTIPLICADO -> new ExpressaoMultiplicacao(esquerda, expressao(Precedencia.MULTIPLICACAO));
-			case DIVIDIDO -> new ExpressaoDivisao(esquerda, expressao(Precedencia.MULTIPLICACAO));
-			case MODULO -> new ExpressaoModulo(esquerda, expressao(Precedencia.MULTIPLICACAO));
-			case MAIS -> new ExpressaoSoma(esquerda, expressao(Precedencia.SOMA));
-			case NEGACAO_NUMERICA -> new ExpressaoSubtracao(esquerda, expressao(Precedencia.SOMA));
-			case MAIOR -> new ExpressaoMaior(esquerda, expressao(Precedencia.COMPARACAO));
-			case MENOR -> new ExpressaoMenor(esquerda, expressao(Precedencia.COMPARACAO));
-			case MAIOR_OU_IGUAL -> new ExpressaoMaiorOuIgual(esquerda, expressao(Precedencia.COMPARACAO)); 
-			case MENOR_OU_IGUAL -> new ExpressaoMenorOuIgual(esquerda, expressao(Precedencia.COMPARACAO));
-			case IGUAL -> new ExpressaoIgual(esquerda, expressao(Precedencia.IGUALDADE));
-			case DIFERENTE -> new ExpressaoDiferente(esquerda, expressao(Precedencia.IGUALDADE));
-			case AND -> new ExpressaoE(esquerda, expressao(Precedencia.E));
-			case OR -> new ExpressaoOu(esquerda, expressao(Precedencia.OU));
+			case MULTIPLICADO -> Precedencia.MULTIPLICACAO;
+			case DIVIDIDO -> Precedencia.MULTIPLICACAO;
+			case MODULO -> Precedencia.MULTIPLICACAO;
+			case MAIS -> Precedencia.SOMA;
+			case MENOS -> Precedencia.SOMA;
+			case MAIOR -> Precedencia.COMPARACAO;
+			case MENOR -> Precedencia.COMPARACAO;
+			case MAIOR_OU_IGUAL -> Precedencia.COMPARACAO; 
+			case MENOR_OU_IGUAL -> Precedencia.COMPARACAO;
+			case IGUAL -> Precedencia.IGUALDADE;
+			case DIFERENTE -> Precedencia.IGUALDADE;
+			case AND -> Precedencia.E;
+			case OR -> Precedencia.OU;
 			default -> throw new IllegalArgumentException();
 		};
+		return new OperadorBinario(esquerda, token, expressao(precedencia));
 	}
 
 	Expressao se() {
