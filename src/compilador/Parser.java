@@ -1,5 +1,6 @@
 package compilador;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Set;
@@ -8,7 +9,7 @@ public class Parser {
 
 	private final ArrayList<Token> tokens;
 	private int indice = 0;
-	private Contexto contexto = new Contexto(Optional.empty(), Optional.empty());
+	private Contexto contexto = new Contexto(Optional.empty(), Optional.empty(), BibliotecaPadrao.bibliotecaPadrao());
 	
 	private Parser(ArrayList<Token> tokens) {
 		this.tokens = tokens;
@@ -31,7 +32,7 @@ Let factorial :=
 	End
 .
 
-Let main := Function(String x) -> Number:
+Let main := Function(String x) -> Any:
 	factorial(10)
 End.
 """);
@@ -217,7 +218,7 @@ End.
 	}
 	
 	private Expressao corpoDeFuncao(Funcao funcao) {
-		this.contexto = new Contexto(Optional.ofNullable(this.contexto), Optional.ofNullable(funcao));
+		this.contexto = new Contexto(Optional.ofNullable(this.contexto), Optional.ofNullable(funcao), new HashMap<>());
 		var corpo = expressao(Precedencia.NENHUMA);
 		this.contexto = this.contexto.pai.get();
 		consumir(TipoDeToken.END, "End esperado como término da função");

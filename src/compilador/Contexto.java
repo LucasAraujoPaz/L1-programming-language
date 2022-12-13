@@ -1,16 +1,16 @@
 package compilador;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 class Contexto {
-	Optional<Contexto> pai;
-	Optional<Funcao> funcao;
-	Map<String, Expressao> tabelaDeSimbolos = new HashMap<>();
+	final Optional<Contexto> pai;
+	final Optional<Funcao> funcao;
+	final Map<String, Expressao> tabelaDeSimbolos;
 	
-	Contexto(Optional<Contexto> pai, Optional<Funcao> funcao) {
+	Contexto(Optional<Contexto> pai, Optional<Funcao> funcao, Map<String, Expressao> tabelaDeSimbolos) {
 		this.pai = pai;
 		this.funcao = funcao;
+		this.tabelaDeSimbolos = tabelaDeSimbolos;
 		if (funcao.isPresent())
 			tabelaDeSimbolos.put(funcao.get().getParametro().nome, funcao.get().getParametro());
 	}

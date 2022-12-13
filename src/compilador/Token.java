@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 enum TipoDeToken {
     NUMERO("\\d+(\\.\\d+)?", Parser::unidade, null, Precedencia.NENHUMA),
     TEXTO("\"(?:\\\\\"|[^\"])*(?<!\\\\)\"", Parser::unidade, null, Precedencia.NENHUMA),
-    IDENTIFICADOR("[a-zA-Z_][a-zA-Z_\\d]*", Parser::referencia, null, Precedencia.NENHUMA),
+    IDENTIFICADOR("[a-zA-Z_][a-zA-Z_~\\d]*", Parser::referencia, null, Precedencia.NENHUMA),
 
     EXPONENCIACAO("\\*\\*", null, Parser::operadorBinario, Precedencia.EXPONENCIACAO),
     MAIOR_OU_IGUAL(">=", null, Parser::operadorBinario, Precedencia.COMPARACAO),
