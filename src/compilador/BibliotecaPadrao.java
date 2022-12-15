@@ -16,7 +16,9 @@ public class BibliotecaPadrao {
 		var b = new Parametro("b");
 		FuncaoLiteral f = new FuncaoLiteral(a, null, List.of());
 		FuncaoLiteral g = new FuncaoLiteral(b, 
-				() -> new TextoAvaliado( (String) a.valor.get().obterValorNativo() + (String) b.valor.get().obterValorNativo() ),
+				new ExpressaoNativa(
+					() -> new TextoAvaliado( (String) a.valor.get().obterValorNativo() + (String) b.valor.get().obterValorNativo() ) 
+				),
 				List.of(a));
 		f.setCorpo(g);
 		return f;

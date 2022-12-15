@@ -6,8 +6,6 @@ import java.nio.file.Paths;
 
 public class L1 {
 	
-	private static final String EXTENSAO = ".l1";
-	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		final String instrucoesDeUso = "Uso: \n" + "check <file> \n" + "run <input?> <file> \n"; 
 		
@@ -17,7 +15,6 @@ public class L1 {
 	    	case "check" -> {
 	    		Testes.asseverar(args.length > 1, instrucoesDeUso);
 		    	final String arquivo = args[1];
-		    	Testes.asseverar( ! arquivo.endsWith(EXTENSAO), "Arquivo já compilado");
 				final String codigoFonte = Files.readString(Paths.get(arquivo));
 				Parser.checar(codigoFonte);
 	    	}
