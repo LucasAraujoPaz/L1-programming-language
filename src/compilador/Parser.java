@@ -190,7 +190,7 @@ public class Parser {
 		var tipoDoRetorno = tipo();
 		consumir(TipoDeToken.DOIS_PONTOS, "Use dois pontos \":\" antes de começar o corpo da função");
 		
-		return new FuncaoLiteral(new Parametro(parametro.texto()), null, new ArrayList<>());
+		return new FuncaoLiteral(tipoDoRetorno, new Parametro(tipoDoParametro, parametro.texto()), null, new ArrayList<>());
 	}
 	
 	private Expressao corpoDeFuncao(Funcao funcao) {
@@ -207,21 +207,29 @@ public class Parser {
 		return funcao; 
 	}
 
-	// TODO
 	private Tipo tipo() { 
 		asseverar(atual().isPresent(), "Tipo esperado", atual());
 		final var token = consumir();
-		var tipos = Set.of("Number", "Boolean", "String", "Array", "Function", "Any");
-		asseverar(tipos.contains(token.texto()), "Tipo inválido", Optional.ofNullable(token));
 		
 		Tipo retorno = switch (token.texto()) {
 			case "Number" -> Tipo.NUMERO;
 			case "Boolean" -> Tipo.BOOLEANO;
 			case "String" -> Tipo.TEXTO;
-			case "Array" -> new Tipo.Lista();
-			case "Function" -> new Tipo.Funcao();
+			case "[" -> { 
+				var tipoDoArray = new Tipo.Lista(tipo()); 
+				consumir(TipoDeToken.COLCHETE_DIREITO, "Colchete direito esperado"); 
+				yield tipoDoArray; 
+			}
+			case "(" -> {
+				var tipoDoParametro = tipo();
+				consumir(TipoDeToken.PARENTESE_DIREITO, "Parêntese direito esperado");
+				consumir(TipoDeToken.SETA_FINA, "Seta esperada antes do tipo de retorno da função");
+				var tipoDoRetorno = tipo();
+				var tipoDaFuncao = new Tipo.Funcao(tipoDoParametro, tipoDoRetorno); 
+				yield tipoDaFuncao; 
+			}
 			case "Any" -> Tipo.QUALQUER;
-			default -> throw new IllegalArgumentException();
+			default -> { asseverar(false, "Tipo inválido", Optional.ofNullable(token)); yield null; }
 		};
 		
 		return retorno;

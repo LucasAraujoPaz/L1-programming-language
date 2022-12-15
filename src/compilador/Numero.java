@@ -4,6 +4,10 @@ public interface Numero extends Expressao {
 
 	@Override
 	NumeroReal avaliar();
+	@Override
+	default Tipo obterTipo() {
+		return Tipo.NUMERO;
+	}
 }
 
 class NumeroReal implements Valor {

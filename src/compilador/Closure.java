@@ -63,6 +63,11 @@ class InvocacaoImpl implements Invocacao {
 		return ((Closure) invocavel.avaliar())
 				.aplicar(input);
 	}
+
+	@Override
+	public Tipo obterTipo() {
+		return invocavel.obterTipo();
+	}
 }
 
 interface Funcao extends Expressao {
@@ -76,11 +81,13 @@ interface Funcao extends Expressao {
 
 class FuncaoLiteral implements Funcao {
 
+	final Tipo tipoDoRetorno;
 	public final Parametro parametro;
 	private Expressao corpo;
 	public final Collection<Parametro> upvalues;
 	
-	public FuncaoLiteral(Parametro parametro, Expressao corpo, Collection<Parametro> upvalues) {
+	public FuncaoLiteral(Tipo tipoDoRetorno, Parametro parametro, Expressao corpo, Collection<Parametro> upvalues) {
+		this.tipoDoRetorno = tipoDoRetorno;
 		this.parametro = parametro;
 		this.corpo = corpo;
 		this.upvalues = upvalues;
@@ -120,16 +127,27 @@ class FuncaoLiteral implements Funcao {
 	public void setCorpo(final Expressao corpo) {
 		this.corpo = corpo;
 	}
+
+	@Override
+	public Tipo obterTipo() {
+		return tipoDoRetorno;
+	}
 }
 
 class Parametro implements Expressao {
+	final Tipo tipo;
 	Optional<Valor> valor = Optional.empty();
 	final String nome;
-	public Parametro(String nome) {
+	public Parametro(Tipo tipo, String nome) {
+		this.tipo = tipo;
 		this.nome = nome;
 	}
 	@Override
 	public Valor avaliar() {
 		return valor.get();
+	}
+	@Override
+	public Tipo obterTipo() {
+		return tipo;
 	}
 }

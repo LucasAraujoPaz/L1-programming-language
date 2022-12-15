@@ -9,13 +9,19 @@ public interface Lista extends Expressao {
 
 class ListaLiteral implements Lista {
 
+	final Tipo tipo;
 	final List<Expressao> lista;
 	public ListaLiteral(List<Expressao> lista) {
+		this.tipo = new Tipo.Lista(Tipo.QUALQUER);
 		this.lista = lista;
 	}
 	@Override
 	public Valor avaliar() {
 		return new ListaAvaliada(lista.stream().map(Expressao::avaliar).toList());
+	}
+	@Override
+	public Tipo obterTipo() {
+		return tipo;
 	}
 }
 class ListaAvaliada implements Valor {

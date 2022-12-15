@@ -2,6 +2,10 @@ package compilador;
 public interface Texto extends Expressao {
 	@Override
 	TextoAvaliado avaliar();
+	@Override
+	default Tipo obterTipo() {
+		return Tipo.TEXTO;
+	}
 }
 
 class TextoLiteral implements Texto {

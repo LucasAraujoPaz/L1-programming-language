@@ -12,11 +12,11 @@ public class BibliotecaPadrao {
 	};
 
 	private static Expressao concatenar() {
-		var a = new Parametro("a");
-		var b = new Parametro("b");
-		FuncaoLiteral f = new FuncaoLiteral(a, null, List.of());
-		FuncaoLiteral g = new FuncaoLiteral(b, 
-				new ExpressaoNativa(
+		var a = new Parametro(Tipo.TEXTO, "a");
+		var b = new Parametro(Tipo.TEXTO, "b");
+		FuncaoLiteral f = new FuncaoLiteral(new Tipo.Funcao(Tipo.TEXTO, Tipo.TEXTO), a, null, List.of());
+		FuncaoLiteral g = new FuncaoLiteral(Tipo.TEXTO, b, 
+				new ExpressaoNativa(Tipo.TEXTO,
 					() -> new TextoAvaliado( (String) a.valor.get().obterValorNativo() + (String) b.valor.get().obterValorNativo() ) 
 				),
 				List.of(a));
@@ -26,12 +26,18 @@ public class BibliotecaPadrao {
 }
 
 class ExpressaoNativa implements Expressao {
+	final Tipo tipo;
 	final Supplier<Valor> s;
-	public ExpressaoNativa(Supplier<Valor> s) {
+	public ExpressaoNativa(Tipo tipo, Supplier<Valor> s) {
+		this.tipo = tipo;
 		this.s = s; 
 	}
 	@Override
 	public Valor avaliar() {
 		return s.get();
+	}
+	@Override
+	public Tipo obterTipo() {
+		return tipo;
 	}
 }

@@ -19,4 +19,8 @@ public class Declaracao implements Expressao {
 		valor = Optional.ofNullable(expressao.avaliar());
 		return valor.get();
 	}
+	@Override
+	public Tipo obterTipo() {
+		return expressao.obterTipo();
+	}
 }

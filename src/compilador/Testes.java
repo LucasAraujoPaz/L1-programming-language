@@ -22,8 +22,8 @@ public class Testes {
 
 	private static void testarFuncoes() {
 		// Let fatorial := x => x < 2 ? 1 : x * fatorial(x - 1). 
-		var x = new Parametro("x");
-		var fatorial = new FuncaoLiteral(x, null, Set.of());
+		var x = new Parametro(Tipo.NUMERO, "x");
+		var fatorial = new FuncaoLiteral(Tipo.NUMERO, x, null, Set.of());
 		var corpo = 
 				new ExpressaoSeSenao(
 						List.of(new OperadorBinario(x, new TokenImpl(TipoDeToken.MENOR, "<", 0), new NumeroLiteral(2))),
@@ -40,9 +40,9 @@ public class Testes {
 		
 		// Let f := a => b => a + b.
 		// f(1)(2) = 3
-		Parametro a = new Parametro("a"), b = new Parametro("b");
-		Funcao g = new FuncaoLiteral(b, new OperadorBinario(a, new TokenImpl(TipoDeToken.MAIS, "+", 0), b), Set.of(a));
-		Funcao f = new FuncaoLiteral(a, g, Set.of());
+		Parametro a = new Parametro(Tipo.NUMERO, "a"), b = new Parametro(Tipo.NUMERO, "b");
+		Funcao g = new FuncaoLiteral(Tipo.NUMERO, b, new OperadorBinario(a, new TokenImpl(TipoDeToken.MAIS, "+", 0), b), Set.of(a));
+		Funcao f = new FuncaoLiteral(new Tipo.Funcao(Tipo.NUMERO, Tipo.NUMERO), a, g, Set.of());
 		var closureG = new InvocacaoImpl(f, new NumeroLiteral(1));
 		var retorno = new InvocacaoImpl(closureG, new NumeroLiteral(2));
 		asseverar(retorno.avaliar().obterValorNativo().equals(3d));

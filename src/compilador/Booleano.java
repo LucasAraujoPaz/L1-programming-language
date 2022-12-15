@@ -3,7 +3,11 @@ package compilador;
 public interface Booleano extends Expressao {
 	
 	@Override
-	ValorBooleano avaliar();	
+	ValorBooleano avaliar();
+	@Override
+	default Tipo obterTipo() {
+		return Tipo.BOOLEANO;
+	}
 }
 
 class BooleanoLiteral implements Booleano {

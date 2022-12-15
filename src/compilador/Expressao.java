@@ -2,6 +2,7 @@ package compilador;
 
 interface Expressao {
 	public Valor avaliar();
+	public Tipo obterTipo();
 }
 
 interface Valor {
@@ -24,6 +25,15 @@ class OperadorUnario implements Expressao {
 			case MENOS -> new NumeroReal( - (Double) expressao.avaliar().obterValorNativo());
 			default -> throw new IllegalArgumentException();
 		};
+	}
+
+	@Override
+	public Tipo obterTipo() {
+		return switch(token.tipo()) {
+			case NOT -> Tipo.BOOLEANO;
+			case MENOS -> Tipo.NUMERO;
+			default -> throw new IllegalArgumentException();
+	};
 	}
 }
 
@@ -66,6 +76,15 @@ class OperadorBinario implements Expressao {
 					ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
 			case OR -> (Boolean) esquerda.avaliar().obterValorNativo() || (Boolean) direita.avaliar().obterValorNativo() ? 
 					ValorBooleano.VERDADEIRO : ValorBooleano.FALSO;
+			default -> throw new IllegalArgumentException();
+		};
+	}
+
+	@Override
+	public Tipo obterTipo() {
+		return switch (token.tipo()) {
+			case EXPONENCIACAO, MULTIPLICADO, DIVIDIDO, MODULO, MAIS, MENOS -> Tipo.NUMERO;
+			case MAIOR, MENOR, MAIOR_OU_IGUAL, MENOR_OU_IGUAL, IGUAL, DIFERENTE, AND, OR -> Tipo.BOOLEANO;
 			default -> throw new IllegalArgumentException();
 		};
 	}
