@@ -24,7 +24,7 @@ public class Parser {
 		asseverar(declaracaoMain.token.texto().equals("main") && 
 				funcaoMain instanceof Funcao f && 
 				f.getParametro().tipo.equals(Tipo.TEXTO), 
-				"A última declaração do arquivo deve ser a função \"main\", com parâmetro String", Optional.empty());
+				"A última declaração do arquivo deve ser a função \"main\", com parâmetro do tipo String", Optional.empty());
 		return declaracaoMain;
 	}
 
