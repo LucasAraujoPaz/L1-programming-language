@@ -1,5 +1,7 @@
 package compilador;
 
+import java.util.Optional;
+
 interface Expressao {
 	public Valor avaliar();
 	public Tipo obterTipo();
@@ -16,6 +18,13 @@ class OperadorUnario implements Expressao {
 	OperadorUnario(final Token token, final Expressao expressao) {
 		this.token = token;
 		this.expressao = expressao;
+		switch(token.tipo()) {
+			case NOT -> Parser.asseverar(expressao.obterTipo().equals(Tipo.BOOLEANO), 
+					"Só booleanos aceitam negação lógica", Optional.ofNullable(token));
+			case MENOS -> Parser.asseverar(expressao.obterTipo().equals(Tipo.NUMERO), 
+					"Só números aceitam negação numérica", Optional.ofNullable(token));
+			default -> throw new IllegalArgumentException();
+		};
 	}
 
 	@Override
@@ -33,7 +42,7 @@ class OperadorUnario implements Expressao {
 			case NOT -> Tipo.BOOLEANO;
 			case MENOS -> Tipo.NUMERO;
 			default -> throw new IllegalArgumentException();
-	};
+		};
 	}
 }
 
@@ -46,6 +55,16 @@ class OperadorBinario implements Expressao {
 		this.token = token;
 		this.esquerda = esquerda;
 		this.direita = direita;
+		switch (token.tipo()) {
+			case EXPONENCIACAO, MULTIPLICADO, DIVIDIDO, MODULO, MAIS, MENOS, MAIOR, MENOR, MAIOR_OU_IGUAL, MENOR_OU_IGUAL -> 
+				Parser.asseverar(esquerda.obterTipo().equals(Tipo.NUMERO) && direita.obterTipo().equals(Tipo.NUMERO), 
+						"Só números aceitam operadores aritméticos", Optional.ofNullable(token));
+			case IGUAL, DIFERENTE -> {}
+			case AND, OR -> 
+				Parser.asseverar(esquerda.obterTipo().equals(Tipo.BOOLEANO) && direita.obterTipo().equals(Tipo.BOOLEANO), 
+						"Só booleanos aceitam operadores lógicos", Optional.ofNullable(token));
+			default -> throw new IllegalArgumentException();
+		};
 	}
 
 	@Override

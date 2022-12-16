@@ -5,14 +5,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Lista extends Expressao {
+	@Override
+	Tipo.Lista obterTipo();
 }
 
 class ListaLiteral implements Lista {
 
-	final Tipo tipo;
+	final Tipo.Lista tipo;
 	final List<Expressao> lista;
 	public ListaLiteral(List<Expressao> lista) {
-		this.tipo = new Tipo.Lista(Tipo.QUALQUER);
+		this.tipo = new Tipo.Lista(Tipo.obterTipoFinal(lista));
 		this.lista = lista;
 	}
 	@Override
@@ -20,7 +22,7 @@ class ListaLiteral implements Lista {
 		return new ListaAvaliada(lista.stream().map(Expressao::avaliar).toList());
 	}
 	@Override
-	public Tipo obterTipo() {
+	public Tipo.Lista obterTipo() {
 		return tipo;
 	}
 }

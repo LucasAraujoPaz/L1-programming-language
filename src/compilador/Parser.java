@@ -21,8 +21,10 @@ public class Parser {
 		asseverar(programa.size() > 0, "É necessário declarar a função main", Optional.empty());
 		var declaracaoMain = programa.get(programa.size() - 1);
 		var funcaoMain = declaracaoMain.expressao;
-		asseverar(declaracaoMain.token.texto().equals("main") && funcaoMain instanceof Funcao, 
-				"A última declaração do arquivo deve ser a função \"main\"", Optional.empty());
+		asseverar(declaracaoMain.token.texto().equals("main") && 
+				funcaoMain instanceof Funcao f && 
+				f.getParametro().tipo.equals(Tipo.TEXTO), 
+				"A última declaração do arquivo deve ser a função \"main\", com parâmetro String", Optional.empty());
 		return declaracaoMain;
 	}
 
@@ -36,7 +38,7 @@ public class Parser {
 
 	private ArrayList<Declaracao> programa() {
 		var declaracoes = new ArrayList<Declaracao>();
-		
+
 		while (atual().isPresent())
 			declaracoes.add(declaracao());
 		
@@ -160,7 +162,9 @@ public class Parser {
 		var corpos = new ArrayList<Expressao>();
 		
 		final Runnable r = () -> {
-			condicoes.add(expressao(Precedencia.NENHUMA));
+			var condicao = expressao(Precedencia.NENHUMA);
+			asseverar(condicao.obterTipo().equals(Tipo.BOOLEANO), "Apenas booleanos podem ser condições", anterior());
+			condicoes.add(condicao);
 			consumir(TipoDeToken.THEN, "Está faltando o Then");
 			corpos.add(expressao(Precedencia.NENHUMA));
 			consumir(TipoDeToken.ELSE, "Está faltando o Else");
@@ -195,6 +199,8 @@ public class Parser {
 	private Expressao corpoDeFuncao(Funcao funcao) {
 		this.contexto = new Contexto(Optional.ofNullable(this.contexto), Optional.ofNullable(funcao), new HashMap<>());
 		var corpo = expressao(Precedencia.NENHUMA);
+		asseverar(corpo.obterTipo().ehSubtipoDe(funcao.obterTipo().tipoDoRetorno),
+				"Corpo da função incompatível com seu tipo de retorno", anterior());
 		this.contexto = this.contexto.pai.get();
 		consumir(TipoDeToken.END, "End esperado como término da função");
 		return corpo;
@@ -228,7 +234,7 @@ public class Parser {
 				yield tipoDaFuncao; 
 			}
 			case "Any" -> Tipo.QUALQUER;
-			default -> { asseverar(false, "Tipo inválido", Optional.ofNullable(token)); yield null; }
+			default -> { asseverar(false, "Tipo inválido", Optional.ofNullable(token)); yield Tipo.QUALQUER; }
 		};
 		
 		return retorno;
@@ -236,6 +242,10 @@ public class Parser {
 
 	Expressao invocacao(Expressao esquerda) {
 		var argumento = expressao(Precedencia.NENHUMA);
+		asseverar(esquerda.obterTipo() instanceof Tipo.Funcao, "Expressão não invocável", anterior());
+		var tipoDaFuncao = (Tipo.Funcao) esquerda.obterTipo(); 
+		asseverar(argumento.obterTipo().ehSubtipoDe(tipoDaFuncao.tipoDoParametro), 
+				"Tipo da função incompatível com o parâmetro passado", anterior());
 		consumir(TipoDeToken.PARENTESE_DIREITO, "Use parêntese direito após argumento da invocação");
 		return new InvocacaoImpl(esquerda, argumento);
 	}

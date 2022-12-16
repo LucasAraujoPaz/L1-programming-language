@@ -66,7 +66,7 @@ class InvocacaoImpl implements Invocacao {
 
 	@Override
 	public Tipo obterTipo() {
-		return invocavel.obterTipo();
+		return ((Tipo.Funcao) invocavel.obterTipo()).tipoDoRetorno;
 	}
 }
 
@@ -77,6 +77,7 @@ interface Funcao extends Expressao {
 	public void putUpvalue(Parametro parametro);
 	public Closure avaliar();
 	Parametro getParametro();
+	Tipo.Funcao obterTipo();
 }
 
 class FuncaoLiteral implements Funcao {
@@ -129,8 +130,8 @@ class FuncaoLiteral implements Funcao {
 	}
 
 	@Override
-	public Tipo obterTipo() {
-		return tipoDoRetorno;
+	public Tipo.Funcao obterTipo() {
+		return new Tipo.Funcao(parametro.obterTipo(), tipoDoRetorno);
 	}
 }
 

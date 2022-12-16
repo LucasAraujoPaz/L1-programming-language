@@ -10,7 +10,7 @@ public class ExpressaoSeSenao implements Expressao {
 				"É preciso que haja 1 corpo a mais que o número de condições");
 		this.condicoes = condicoes;
 		this.corpos = corpos;
-		this.tipo = Tipo.QUALQUER;
+		this.tipo = Tipo.obterTipoFinal(corpos);
 	}
 	@Override
 	public Valor avaliar() {
