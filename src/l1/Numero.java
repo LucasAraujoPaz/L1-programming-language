@@ -1,4 +1,4 @@
-package compilador;
+package l1;
 
 public interface Numero extends Expressao {
 

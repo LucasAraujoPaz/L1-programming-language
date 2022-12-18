@@ -1,4 +1,4 @@
-package compilador;
+package l1;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;

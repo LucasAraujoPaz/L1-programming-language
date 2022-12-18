@@ -1,8 +1,8 @@
-package compilador;
+package l1;
 import java.util.List;
 import java.util.Set;
 
-import compilador.Token.TokenImpl;
+import l1.Token.TokenImpl;
 
 public class Testes {
 

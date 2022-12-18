@@ -1,4 +1,4 @@
-package compilador;
+package l1;
 
 import java.util.LinkedList;
 import java.util.List;
